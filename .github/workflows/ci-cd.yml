@@ -19,7 +19,7 @@ jobs:
     name: Lint & Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -85,7 +85,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -146,7 +146,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -169,7 +169,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -193,7 +193,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -228,7 +228,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: staging
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
@@ -254,7 +254,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production  # GitHub environment with required reviewers
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
