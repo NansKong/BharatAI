@@ -1,0 +1,47 @@
+version: 2
+updates:
+  # Python (pip) — backend
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - python
+    reviewers:
+      - bharatai-team
+    commit-message:
+      prefix: "deps(py):"
+
+  # npm — frontend
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - javascript
+    reviewers:
+      - bharatai-team
+    commit-message:
+      prefix: "deps(js):"
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - ci
+    commit-message:
+      prefix: "ci(deps):"

@@ -1,0 +1,208 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "18"
+
+jobs:
+  # ── Backend Lint ─────────────────────────────────────────────────────────
+  backend-lint:
+    name: Backend Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install lint deps
+        run: pip install black isort ruff
+
+      - name: Check formatting (black)
+        run: black --check app/ tests/
+
+      - name: Check imports (isort)
+        run: isort --check app/ tests/
+
+      - name: Lint (ruff)
+        run: ruff check app/ tests/
+
+  # ── Backend Tests ────────────────────────────────────────────────────────
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    needs: backend-lint
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: bharatai
+          POSTGRES_PASSWORD: bharatai_pass
+          POSTGRES_DB: bharatai_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://bharatai:bharatai_pass@localhost:5432/bharatai_test
+      REDIS_URL: redis://localhost:6379/0
+      JWT_ALGORITHM: RS256
+      APP_ENV: test
+      EMAIL_ENABLED: "false"
+      FEATURE_AI_CLASSIFICATION: "false"
+      FEATURE_PERSONALIZED_FEED: "false"
+      FEATURE_INCOSCORE_ENGINE: "false"
+      FEATURE_COMMUNITY: "false"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate test JWT keys
+        run: |
+          openssl genrsa -out jwt_private.pem 2048
+          openssl rsa -in jwt_private.pem -pubout -out jwt_public.pem
+
+      - name: Run migrations
+        run: alembic upgrade head
+        env:
+          DATABASE_URL: postgresql+asyncpg://bharatai:bharatai_pass@localhost:5432/bharatai_test
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ -v --tb=short \
+            --cov=app \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --cov-fail-under=80
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: backend/coverage.xml
+          flags: backend
+
+  # ── Frontend Lint ─────────────────────────────────────────────────────────
+  frontend-lint:
+    name: Frontend Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (ESLint)
+        run: npm run lint
+
+      - name: Type check (TypeScript)
+        run: npm run type-check
+
+  # ── Security Scan ─────────────────────────────────────────────────────────
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [backend-tests]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Audit Python dependencies
+        run: pip-audit -r backend/requirements.txt --ignore-vuln PYSEC-2022-43012
+        continue-on-error: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Audit npm dependencies
+        run: npm audit --audit-level=high
+        working-directory: frontend
+        continue-on-error: true
+
+  # ── Docker Build Check ────────────────────────────────────────────────────
+  docker-build:
+    name: Docker Build Check
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-lint]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: false
+          tags: bharatai-backend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: false
+          tags: bharatai-frontend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

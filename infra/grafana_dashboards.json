@@ -1,0 +1,218 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "description": "BharatAI Backend Observability Dashboard",
+    "editable": true,
+    "schemaVersion": 30,
+    "title": "BharatAI Overview",
+    "panels": [
+        {
+            "title": "API Latency P50 / P95 / P99",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+                    "legendFormat": "P50"
+                },
+                {
+                    "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+                    "legendFormat": "P95"
+                },
+                {
+                    "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+                    "legendFormat": "P99"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "title": "Request Rate (per second)",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(http_requests_total[1m]))",
+                    "legendFormat": "total"
+                },
+                {
+                    "expr": "sum(rate(http_requests_total{status=~'5..'}[1m]))",
+                    "legendFormat": "5xx errors"
+                }
+            ]
+        },
+        {
+            "title": "Celery Queue Depth",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 0,
+                "y": 8
+            },
+            "targets": [
+                {
+                    "expr": "celery_queue_length",
+                    "legendFormat": "tasks queued"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 100
+                            },
+                            {
+                                "color": "red",
+                                "value": 500
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "title": "DB Pool Utilization",
+            "type": "gauge",
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 6,
+                "y": 8
+            },
+            "targets": [
+                {
+                    "expr": "sqlalchemy_pool_checkedout / sqlalchemy_pool_size",
+                    "legendFormat": "utilization"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percentunit",
+                    "max": 1,
+                    "thresholds": {
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 0.6
+                            },
+                            {
+                                "color": "red",
+                                "value": 0.8
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "title": "Redis Cache Hit Rate",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 12,
+                "y": 8
+            },
+            "targets": [
+                {
+                    "expr": "redis_keyspace_hits / (redis_keyspace_hits + redis_keyspace_misses)",
+                    "legendFormat": "hit rate"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percentunit"
+                }
+            }
+        },
+        {
+            "title": "Scrape Success Rate",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 18,
+                "y": 8
+            },
+            "targets": [
+                {
+                    "expr": "1 - (sum(rate(scrape_failures_total[10m])) / sum(rate(scrape_attempts_total[10m])))",
+                    "legendFormat": "success rate"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percentunit"
+                }
+            }
+        },
+        {
+            "title": "Feed Click-Through Rate",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 12
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(feed_clicks_total[10m])) / sum(rate(feed_impressions_total[10m]))",
+                    "legendFormat": "CTR"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percentunit"
+                }
+            }
+        },
+        {
+            "title": "Active WebSocket Connections",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 12,
+                "y": 12
+            },
+            "targets": [
+                {
+                    "expr": "websocket_connections_active",
+                    "legendFormat": "connections"
+                }
+            ]
+        }
+    ],
+    "time": {
+        "from": "now-1h",
+        "to": "now"
+    },
+    "refresh": "30s"
+}

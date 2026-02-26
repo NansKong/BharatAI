@@ -1,0 +1,78 @@
+# BharatAI — Prometheus AlertManager Rules
+# These rules fire alerts on critical backend health signals.
+
+groups:
+  - name: bharatai_alerts
+    rules:
+      # ── API Error Rate ─────────────────────────────────────────
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[2m]))
+            /
+            sum(rate(http_requests_total[2m]))
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "BharatAI API error rate > 5%"
+          description: "{{ $value | humanizePercentage }} of requests are returning 5xx errors over the last 2 minutes."
+
+      # ── High API Latency ───────────────────────────────────────
+      - alert: HighAPILatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))
+          > 1.0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "BharatAI API P95 latency > 1s"
+          description: "P95 latency is {{ $value }}s over the last 5 minutes."
+
+      # ── Celery Queue Depth ─────────────────────────────────────
+      - alert: CeleryQueueDepthHigh
+        expr: celery_queue_length > 500
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Celery queue depth > 500"
+          description: "{{ $value }} tasks are pending in the Celery queue."
+
+      # ── Database Connection Pool ───────────────────────────────
+      - alert: DBPoolExhausted
+        expr: |
+          (sqlalchemy_pool_checkedout / sqlalchemy_pool_size) > 0.80
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "DB connection pool > 80% utilized"
+          description: "{{ $value | humanizePercentage }} of the connection pool is in use."
+
+      # ── Redis Connection Failure ───────────────────────────────
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is unreachable"
+          description: "The Redis health check has failed for > 1 minute."
+
+      # ── Scraping Failure Rate ──────────────────────────────────
+      - alert: ScrapingFailureRate
+        expr: |
+          (
+            sum(rate(scrape_failures_total[10m]))
+            /
+            sum(rate(scrape_attempts_total[10m]))
+          ) > 0.30
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Scraping failure rate > 30%"
+          description: "{{ $value | humanizePercentage }} of scrape attempts are failing."

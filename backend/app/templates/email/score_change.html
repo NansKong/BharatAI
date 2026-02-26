@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>InCoScore Update</title>
+</head>
+
+<body style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#f9f9f9;">
+    <div style="background:#fff;border-radius:8px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+        <h2 style="color:#0A1628;margin-top:0">📈 Your InCoScore Changed</h2>
+        <p>Hi <strong>{{ user_name }}</strong>,</p>
+        <p>Your InCoScore has been updated:</p>
+        <div style="text-align:center;margin:24px 0">
+            <span style="font-size:2em;color:#9e9e9e">{{ old_score | int }}</span>
+            <span style="font-size:2em;margin:0 16px">→</span>
+            <span style="font-size:2em;color:#00BFA5;font-weight:bold">{{ new_score | int }}</span>
+            <div style="color:{% if delta > 0 %}#00796b{% else %}#c62828{% endif %};font-weight:bold;margin-top:8px">
+                {% if delta > 0 %}+{% endif %}{{ delta | int }} pts
+            </div>
+        </div>
+        <p style="color:#888;font-size:12px;margin-top:32px">BharatAI · Empowering Indian Students</p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,2433 @@
+{
+  "info": {
+    "_postman_id": "0ad5cb2a-de54-49fa-ab25-710ee98f81bd",
+    "name": "BharatAI API",
+    "description": "India's AI-powered academic opportunity intelligence platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "0.1.0"
+  },
+  "item": [
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "List monitored sources (admin only)",
+          "_postman_id": "552a1135-ad7a-4b2e-bf07-58310a890b83",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/sources",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "sources"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "active",
+                  "value": "",
+                  "description": "Filter by active status",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "page_size",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create monitored source (admin only)",
+          "_postman_id": "ae75f301-801d-47ff-8683-f5fdb21bdc96",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/sources",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "sources"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Trigger source scrape manually (admin only)",
+          "_postman_id": "1f9682bd-d981-475c-8a68-59bf43c6fa93",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/sources/{source_id}/trigger",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "sources",
+                "{source_id}",
+                "trigger"
+              ],
+              "variable": [
+                {
+                  "key": "source_id",
+                  "value": ":source_id",
+                  "description": "Path parameter: source_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "List unclassified opportunities (admin review queue)",
+          "_postman_id": "64109066-5099-4cf7-a7eb-1087356a2f83",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/opportunities/unclassified",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "opportunities",
+                "unclassified"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "page_size",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Content moderation queue (admin only)",
+          "_postman_id": "0f397667-baaf-49ef-a6a0-8be11d85cac5",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reports"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "17fff2aa-85d3-4a16-97c0-a429c36820f4"
+    },
+    {
+      "name": "Applications",
+      "item": [
+        {
+          "name": "Create application",
+          "_postman_id": "543a0d55-e9a3-4314-857b-f0053ee4cc5c",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/applications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "applications"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create a new application for an opportunity. Students only. One application per opportunity."
+          },
+          "response": []
+        },
+        {
+          "name": "List my applications",
+          "_postman_id": "08611cbc-8719-4502-bf9b-9602c0fc1921",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/applications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "applications"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "List the current user's applications, optionally filtered by status."
+          },
+          "response": []
+        },
+        {
+          "name": "Update application status",
+          "_postman_id": "f718c534-a36a-45ec-81e8-c335fb66fc17",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/applications/{application_id}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "applications",
+                "{application_id}",
+                "status"
+              ],
+              "variable": [
+                {
+                  "key": "application_id",
+                  "value": ":application_id",
+                  "description": "Path parameter: application_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Update the status of an application. Enforces a valid state machine: draft→submitted, submitted→accepted/rejected, draft/submitted→withdrawn. Admin can update any application; students can only update their own."
+          },
+          "response": []
+        },
+        {
+          "name": "Get AI-generated application checklist",
+          "_postman_id": "f3f5fe19-00dc-4fbe-b223-717218ed8bcf",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/applications/{application_id}/checklist",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "applications",
+                "{application_id}",
+                "checklist"
+              ],
+              "variable": [
+                {
+                  "key": "application_id",
+                  "value": ":application_id",
+                  "description": "Path parameter: application_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Returns a checklist of preparation steps based on the opportunity's eligibility text."
+          },
+          "response": []
+        },
+        {
+          "name": "Get autofill suggestions from profile",
+          "_postman_id": "68dff4fc-42e8-4399-b19d-585569fcf71f",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/applications/{application_id}/autofill",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "applications",
+                "{application_id}",
+                "autofill"
+              ],
+              "variable": [
+                {
+                  "key": "application_id",
+                  "value": ":application_id",
+                  "description": "Path parameter: application_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Returns form field suggestions from the user's profile. Requires consent_to_autofill=true on profile. Rate-limited to 20 requests/hour."
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "5fdb2d09-d202-4710-a9d9-a6d31bb2b221"
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register a new student account",
+          "_postman_id": "845b8197-5833-4967-82b6-d7a3937f4b03",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a new student account with email and password. Returns JWT tokens."
+          },
+          "response": []
+        },
+        {
+          "name": "Login with email and password",
+          "_postman_id": "14938187-4cfd-4ea1-bbe9-7a6c755ccffc",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Returns JWT access and refresh tokens on successful authentication."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh access token",
+          "_postman_id": "3c7f1d35-6717-431c-9870-55569270209a",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Exchange a valid refresh token for a new access token + refresh token pair (rotation)."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout and revoke current access token",
+          "_postman_id": "85292893-f4ee-424e-8812-ae3c574d2702",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "e36549b7-8971-4dfe-96f2-14d5700df352"
+    },
+    {
+      "name": "Community",
+      "item": [
+        {
+          "name": "Create post",
+          "_postman_id": "da180024-a771-4491-ab30-edd4a28c1af4",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/posts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "posts"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Paginated global/group post feed",
+          "_postman_id": "6d82dd50-fd1e-4a3c-bda5-70d480e47ed2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/posts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "posts"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "group_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle like on a post (idempotent)",
+          "_postman_id": "3736d139-d592-482f-950d-822ca3965b7f",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/posts/{post_id}/like",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "posts",
+                "{post_id}",
+                "like"
+              ],
+              "variable": [
+                {
+                  "key": "post_id",
+                  "value": ":post_id",
+                  "description": "Path parameter: post_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Add comment",
+          "_postman_id": "c1a68e67-2f9e-4a9a-996c-8bd40fe76a29",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/posts/{post_id}/comments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "posts",
+                "{post_id}",
+                "comments"
+              ],
+              "variable": [
+                {
+                  "key": "post_id",
+                  "value": ":post_id",
+                  "description": "Path parameter: post_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "List comments on a post",
+          "_postman_id": "7bfaddde-4a88-4289-8f1b-016908f2af44",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/posts/{post_id}/comments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "posts",
+                "{post_id}",
+                "comments"
+              ],
+              "variable": [
+                {
+                  "key": "post_id",
+                  "value": ":post_id",
+                  "description": "Path parameter: post_id"
+                }
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Report a post",
+          "_postman_id": "4b966209-3ada-4cb5-bba6-f6045f56bb95",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/posts/{post_id}/report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "posts",
+                "{post_id}",
+                "report"
+              ],
+              "variable": [
+                {
+                  "key": "post_id",
+                  "value": ":post_id",
+                  "description": "Path parameter: post_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Report a comment",
+          "_postman_id": "a0109f01-614e-46a7-8b56-0b274baf2e93",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/comments/{comment_id}/report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "comments",
+                "{comment_id}",
+                "report"
+              ],
+              "variable": [
+                {
+                  "key": "comment_id",
+                  "value": ":comment_id",
+                  "description": "Path parameter: comment_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create group (admin only)",
+          "_postman_id": "197a06f7-a632-4839-ab51-6fabbf26e8f0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "groups"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "List groups",
+          "_postman_id": "adf8cf93-cbd2-4ebb-8896-8a15d3cc776a",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "groups"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Join a group",
+          "_postman_id": "57492c53-c289-4f2e-8553-f76df325b040",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/groups/{group_id}/join",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "groups",
+                "{group_id}",
+                "join"
+              ],
+              "variable": [
+                {
+                  "key": "group_id",
+                  "value": ":group_id",
+                  "description": "Path parameter: group_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Group-scoped post feed",
+          "_postman_id": "e1171282-7d47-4363-9684-eeda622724af",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/groups/{group_id}/feed",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "groups",
+                "{group_id}",
+                "feed"
+              ],
+              "variable": [
+                {
+                  "key": "group_id",
+                  "value": ":group_id",
+                  "description": "Path parameter: group_id"
+                }
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "List my achievements",
+          "_postman_id": "f00ab146-dcbc-493c-a3f8-ffdafce51d5c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/achievements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "achievements"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Submit achievement",
+          "_postman_id": "dd88f7ba-b1b0-4f72-af05-b8ae8bc154ba",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/achievements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "achievements"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Verify or reject achievement (admin only)",
+          "_postman_id": "7747dc87-9104-4cf5-ba92-4e56e4bd22b8",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/achievements/{achievement_id}/verify",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "achievements",
+                "{achievement_id}",
+                "verify"
+              ],
+              "variable": [
+                {
+                  "key": "achievement_id",
+                  "value": ":achievement_id",
+                  "description": "Path parameter: achievement_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Endorse a peer's skill (idempotent)",
+          "_postman_id": "b1c27412-0b83-4516-b01a-e890fbde8484",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/community/users/{user_id}/endorse/{skill}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "community",
+                "users",
+                "{user_id}",
+                "endorse",
+                "{skill}"
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": ":user_id",
+                  "description": "Path parameter: user_id"
+                },
+                {
+                  "key": "skill",
+                  "value": ":skill",
+                  "description": "Path parameter: skill"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "4cedecf6-ef63-4964-9e62-b76b8a8fbf70"
+    },
+    {
+      "name": "Feed",
+      "item": [
+        {
+          "name": "Get personalized opportunity feed",
+          "_postman_id": "f8f5d301-6589-4586-ac42-105b0b377733",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/feed",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "feed"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "Maximum number of opportunities to return (1–100)",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Returns a ranked list of opportunities tailored to the current user's profile, skills, interests, and past engagement.\n\n**Ranking factors:** interest embedding similarity, skill keyword match, application history, deadline urgency.\n\n**Cold start:** If the user has no profile data, returns the most recent active opportunities unsorted.\n\n**Caching:** Results are cached in Redis (TTL: 5 min) and the response includes `cached: true` when served from cache."
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "43f977dd-42c6-4270-be56-d00a894fce92"
+    },
+    {
+      "name": "General",
+      "item": [
+        {
+          "name": "Metrics",
+          "_postman_id": "f50a5022-64c9-4085-b551-c644a301a2b0",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/metrics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "metrics"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Endpoint that serves Prometheus metrics."
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "b1b43bb8-9953-4c3d-aee2-319b52196f86"
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Overall health check",
+          "_postman_id": "a7c58eda-97c6-454b-af05-dac2e3143bf7",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Database health check",
+          "_postman_id": "b047762c-1bb1-440d-9bfb-f0f89a72607a",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health/db",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health",
+                "db"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Redis health check",
+          "_postman_id": "451b0255-6a9d-479b-8dd9-6e3754ca2ea8",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health/redis",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health",
+                "redis"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "fd8db9c1-039f-4eee-a582-0c425facbbc8"
+    },
+    {
+      "name": "InCoScore",
+      "item": [
+        {
+          "name": "My current InCoScore",
+          "_postman_id": "ca2b1bcf-2d6a-489f-98c6-224c85690969",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/incoscore/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "incoscore",
+                "me"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Overall leaderboard (top 100)",
+          "_postman_id": "769e1d2a-0254-47b1-ac0d-7418d750bf62",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/incoscore/leaderboard/overall",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "incoscore",
+                "leaderboard",
+                "overall"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Domain-specific leaderboard",
+          "_postman_id": "b2b0d192-a395-421c-af6b-27f034208b15",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/incoscore/leaderboard/domain/{domain}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "incoscore",
+                "leaderboard",
+                "domain",
+                "{domain}"
+              ],
+              "variable": [
+                {
+                  "key": "domain",
+                  "value": ":domain",
+                  "description": "Path parameter: domain"
+                }
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "College-scoped leaderboard",
+          "_postman_id": "163f0732-05ed-4f47-b1b1-608f8ebba687",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/incoscore/leaderboard/college/{college}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "incoscore",
+                "leaderboard",
+                "college",
+                "{college}"
+              ],
+              "variable": [
+                {
+                  "key": "college",
+                  "value": ":college",
+                  "description": "Path parameter: college"
+                }
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "7aa19de2-8a67-4eeb-8b95-5acd067fada2"
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List notifications",
+          "_postman_id": "82e91868-4417-4190-81c9-3907c2491cb6",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "unread_only",
+                  "value": "",
+                  "description": "If true, return only unread notifications",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "Max results (1–100)",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "description": "Pagination offset",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Returns the current user's notifications, newest first. Use `unread_only=true` to show only unread items. Supports `limit`/`offset` pagination."
+          },
+          "response": []
+        },
+        {
+          "name": "Unread notification count",
+          "_postman_id": "c5981f17-0a93-47d1-8b6f-0e031a85f4a6",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/count",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "count"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Returns the number of unread notifications for the notification bell badge."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark notification as read",
+          "_postman_id": "4db34070-bb29-4bcb-8f45-814619bf8008",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/{notification_id}/read",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "{notification_id}",
+                "read"
+              ],
+              "variable": [
+                {
+                  "key": "notification_id",
+                  "value": ":notification_id",
+                  "description": "Path parameter: notification_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Marks a single notification as read. Returns 404 if the notification does not belong to the current user."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark all notifications as read",
+          "_postman_id": "e98b0cd8-78e6-4d67-a17b-ad47b09c4418",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/read-all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "read-all"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Bulk-marks every unread notification for the current user as read in a single operation."
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "44d0a1dc-5555-4157-a037-fbca03acd4f1"
+    },
+    {
+      "name": "Opportunities",
+      "item": [
+        {
+          "name": "List opportunities",
+          "_postman_id": "53afd17c-ec09-4b7c-bce6-a6cca84d36f4",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/opportunities",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "opportunities"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "domain",
+                  "value": "",
+                  "description": "Filter by domain",
+                  "disabled": true
+                },
+                {
+                  "key": "institution",
+                  "value": "",
+                  "description": "Filter by institution name",
+                  "disabled": true
+                },
+                {
+                  "key": "before_deadline",
+                  "value": "",
+                  "description": "Opportunities with deadline before this date",
+                  "disabled": true
+                },
+                {
+                  "key": "keyword",
+                  "value": "",
+                  "description": "Keyword search in title/description/institution",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "description": "Opaque cursor from previous response",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Cursor-paginated, filterable list of opportunities. Supports domain, deadline, institution, and keyword filters."
+          },
+          "response": []
+        },
+        {
+          "name": "Create opportunity (admin only)",
+          "_postman_id": "30864ed8-fee0-4883-bb54-daabc915f696",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/opportunities",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "opportunities"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get opportunity details",
+          "_postman_id": "33766b98-ec10-499c-8828-8208bf03fecb",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/opportunities/{opportunity_id}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "opportunities",
+                "{opportunity_id}"
+              ],
+              "variable": [
+                {
+                  "key": "opportunity_id",
+                  "value": ":opportunity_id",
+                  "description": "Path parameter: opportunity_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update opportunity (admin only)",
+          "_postman_id": "dd07d23d-7810-4115-8d60-876c047d54a5",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/opportunities/{opportunity_id}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "opportunities",
+                "{opportunity_id}"
+              ],
+              "variable": [
+                {
+                  "key": "opportunity_id",
+                  "value": ":opportunity_id",
+                  "description": "Path parameter: opportunity_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Soft delete opportunity (admin only)",
+          "_postman_id": "e3cb6373-0f6b-4d0c-a14d-4b1e2260b249",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/opportunities/{opportunity_id}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "opportunities",
+                "{opportunity_id}"
+              ],
+              "variable": [
+                {
+                  "key": "opportunity_id",
+                  "value": ":opportunity_id",
+                  "description": "Path parameter: opportunity_id"
+                }
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "f1ab0d24-28ef-4314-b597-0579d221d599"
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get full profile with embedding status",
+          "_postman_id": "e4cdf473-1f31-4869-a02c-96daec089f53",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/profile/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "profile",
+                "me"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update profile manually",
+          "_postman_id": "03a37b4b-b0ac-438d-96a0-256646e01354",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "profile"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Upload resume PDF (max 5MB)",
+          "_postman_id": "408fe0ba-b820-468a-a914-a60e198d07cb",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/profile/resume",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "profile",
+                "resume"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "49f4fba7-0860-480d-bf50-42b70f72581b"
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get current user",
+          "_postman_id": "5350b9f5-0a76-4ecc-8a4b-431a2a1e2233",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Returns the authenticated user's core account fields (id, name, email, role, college, degree, year). For extended profile data (bio, skills, interests, social links) use `GET /api/v1/profile`."
+          },
+          "response": []
+        },
+        {
+          "name": "Update current user profile (legacy)",
+          "_postman_id": "0b515081-6835-46c0-b131-4caa1c1d539f",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/me/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me",
+                "profile"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Lightweight profile patch — prefer `PUT /api/v1/profile` for full profile management. This endpoint is kept for backward compatibility."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload resume PDF",
+          "_postman_id": "c601ba19-54c6-4ac7-b112-0d23c7ec2573",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/me/resume",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me",
+                "resume"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            },
+            "description": "Upload a PDF resume (max 5 MB). The file is validated for MIME type and size before storage. After upload, the AI autofill pipeline extracts skills, education, and experience automatically."
+          },
+          "response": []
+        }
+      ],
+      "_postman_id": "8245e05f-ed40-49e0-b1f9-59877442d64f"
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

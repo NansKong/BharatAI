@@ -1,0 +1,40 @@
+﻿services:
+  backend:
+    image: bharatai/backend:staging
+    env_file: .env
+    environment:
+      APP_ENV: staging
+    restart: unless-stopped
+
+  worker:
+    image: bharatai/backend:staging
+    env_file: .env
+    command: >
+      celery -A app.workers.celery_app worker
+      --loglevel=info
+      --concurrency=4
+      --queues=default,scraping,ai,notifications
+    restart: unless-stopped
+
+  beat:
+    image: bharatai/backend:staging
+    env_file: .env
+    command: >
+      celery -A app.workers.celery_app beat
+      --loglevel=info
+    restart: unless-stopped
+
+  frontend:
+    image: bharatai/frontend:staging
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: https://staging-api.bharatai.in/api/v1
+      NEXT_PUBLIC_WS_URL: wss://staging-api.bharatai.in/ws
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
