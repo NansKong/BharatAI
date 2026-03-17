@@ -1,4 +1,4 @@
-﻿# BharatAI ðŸ‡®ðŸ‡³
+﻿# BharatAI 
 
 > India's first AI-powered academic opportunity intelligence platform for college students.
 
