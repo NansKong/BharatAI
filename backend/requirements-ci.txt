@@ -1,0 +1,78 @@
+# CI-only requirements — omits heavy ML/AI packages (torch, transformers,
+# sentence-transformers, faiss-cpu, spacy, playwright, locust) which are not
+# needed for unit/integration tests and would cause pip install to time out or
+# fail on the GitHub Actions ubuntu-latest runner.
+
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+gunicorn==21.2.0
+pydantic==2.6.0
+pydantic-settings==2.1.0
+pydantic[email]==2.6.0
+
+# Database
+sqlalchemy[asyncio]==2.0.25
+asyncpg==0.29.0
+alembic==1.13.1
+psycopg2-binary==2.9.9
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==3.2.2
+authlib==1.3.0
+httpx==0.26.0
+
+# Redis
+redis==5.0.1
+hiredis==2.3.2
+
+# Celery
+celery[redis]==5.3.6
+
+# Scraping (lightweight only)
+beautifulsoup4==4.12.3
+lxml==5.1.0
+
+# NLP (needed by app.ai.resume_parser at top-level)
+pdfplumber==0.10.3
+PyMuPDF==1.23.26
+spacy==3.7.2
+
+# File Storage (needed by app.api.v1.profile)
+minio==7.2.3
+boto3==1.34.34
+python-magic==0.4.27
+
+# Elasticsearch (needed by app.api.v1.opportunities)
+elasticsearch[async]==8.12.0
+
+# Email
+aiosmtplib==3.0.1
+jinja2==3.1.3
+python-multipart==0.0.7
+
+# Security
+bleach==6.1.0
+slowapi==0.1.9
+
+# Observability
+prometheus-fastapi-instrumentator==6.1.0
+opentelemetry-api==1.24.0
+opentelemetry-sdk==1.24.0
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-sqlalchemy
+
+# Utilities
+python-dotenv==1.0.1
+structlog==24.1.0
+tenacity==8.2.3
+arrow==1.3.0
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.4
+pytest-cov==4.1.0
+factory-boy==3.3.0
+respx==0.20.2
+Faker==22.6.0
