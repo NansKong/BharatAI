@@ -2,6 +2,7 @@
 WebSocket connection manager for real-time notification push.
 Maintains an in-memory registry of connected clients per user_id.
 """
+
 from __future__ import annotations
 
 import json

@@ -4,6 +4,7 @@ Generate a Postman Collection v2.1 from the exported OpenAPI spec.
 Run from the backend/ directory:
     python scripts/generate_postman.py
 """
+
 from __future__ import annotations
 
 import json

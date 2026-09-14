@@ -2,6 +2,7 @@
 Database seed script for development.
 Run: docker compose exec backend python scripts/seed.py
 """
+
 import asyncio
 import json
 import os

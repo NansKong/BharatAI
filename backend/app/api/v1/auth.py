@@ -1,6 +1,7 @@
 """
 Authentication API router: register, login, refresh, logout, Google OAuth.
 """
+
 from datetime import datetime, timezone
 
 from authlib.integrations.starlette_client import OAuth

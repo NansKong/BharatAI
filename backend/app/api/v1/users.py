@@ -1,6 +1,7 @@
 """
 Users API – current user info and resume upload.
 """
+
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status

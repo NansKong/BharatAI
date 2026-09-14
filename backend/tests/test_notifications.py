@@ -3,6 +3,7 @@ Phase 7 Integration tests — Notification Engine.
 Tests: list/count/mark-read, opportunity-match creates notification,
 unsubscribed user skips email, deadline-reminder creates per-applicant notifications.
 """
+
 from __future__ import annotations
 
 import json

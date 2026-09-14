@@ -1,6 +1,7 @@
 """
 Opportunities API - CRUD + search + filter.
 """
+
 import base64
 import hashlib
 import logging

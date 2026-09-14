@@ -2,6 +2,7 @@
 Applications API — CRUD, status state machine, checklist, autofill.
 Phase 5: Application Assistance Engine
 """
+
 from __future__ import annotations
 
 import json

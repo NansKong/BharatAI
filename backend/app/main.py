@@ -1,6 +1,7 @@
 """
 BharatAI FastAPI Application – Main Entrypoint
 """
+
 import time
 from contextlib import asynccontextmanager
 

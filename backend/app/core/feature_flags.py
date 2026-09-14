@@ -8,6 +8,7 @@ Provides `is_enabled(flag_name, user_id)` with:
   4. User whitelist targeting
   5. Evaluation logging for analytics
 """
+
 from __future__ import annotations
 
 import hashlib

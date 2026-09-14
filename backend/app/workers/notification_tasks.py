@@ -3,6 +3,7 @@ Celery notification tasks — triggered by application events.
 All DB interactions use asyncio.get_event_loop().run_until_complete() so they
 can run in a synchronous Celery worker process.
 """
+
 from __future__ import annotations
 
 import asyncio

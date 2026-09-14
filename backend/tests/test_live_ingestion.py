@@ -5,6 +5,7 @@ Covers two failure modes that destroyed data in production:
   * the Redis cache was flushed with the pattern ``*``, which also wiped the
     refresh-token whitelist and the revoked-access-token blocklist
 """
+
 import uuid
 from datetime import datetime, timedelta, timezone
 

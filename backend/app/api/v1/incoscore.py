@@ -2,6 +2,7 @@
 InCoScore API — leaderboards, personal score, badges.
 Phase 6: Community & InCoScore Engine
 """
+
 from __future__ import annotations
 
 import json

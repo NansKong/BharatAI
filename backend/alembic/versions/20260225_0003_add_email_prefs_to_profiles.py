@@ -4,6 +4,7 @@ Revision ID: 20260225_0003
 Revises: 20260225_0002
 Create Date: 2026-02-25
 """
+
 from alembic import op
 
 # revision identifiers

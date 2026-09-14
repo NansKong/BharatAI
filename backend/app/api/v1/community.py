@@ -2,6 +2,7 @@
 Community API — Posts, Groups, Moderation, Achievements, Peer Endorsements.
 Phase 6: Community & InCoScore Engine
 """
+
 from __future__ import annotations
 
 import logging

@@ -1,4 +1,5 @@
 """Celery tasks for InCoScore computation."""
+
 from __future__ import annotations
 
 import json

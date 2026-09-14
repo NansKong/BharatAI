@@ -2,6 +2,7 @@
 Alembic env.py – uses synchronous psycopg2 for migrations.
 The running app uses asyncpg; alembic uses psycopg2 (sync) — this is the standard pattern.
 """
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool

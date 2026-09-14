@@ -1,6 +1,7 @@
 """
 Celery application configuration.
 """
+
 import sys
 
 from celery import Celery

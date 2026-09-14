@@ -2,6 +2,7 @@
 Notifications API — in-app notification inbox + mark-read.
 Phase 7: Notification Engine
 """
+
 from __future__ import annotations
 
 import logging

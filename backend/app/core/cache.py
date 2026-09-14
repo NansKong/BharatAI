@@ -4,6 +4,7 @@ Redis caching decorators and invalidation helpers.
 Provides a decorator for automatic cache-aside on FastAPI endpoints,
 plus targeted invalidation functions for feed, leaderboard, and opportunities.
 """
+
 from __future__ import annotations
 
 import functools

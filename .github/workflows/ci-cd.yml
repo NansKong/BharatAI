@@ -202,30 +202,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & push backend image
+      - name: Build backend image
         uses: docker/build-push-action@v5
         with:
           context: ./backend
-          push: ${{ github.ref == 'refs/heads/main' }}
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:${{ github.sha }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:latest
+          push: false
+          tags: bharatai-backend:latest
 
-      - name: Build & push frontend image
+      - name: Build frontend image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
-          push: ${{ github.ref == 'refs/heads/main' }}
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:${{ github.sha }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
+          push: false
+          tags: bharatai-frontend:latest
 
   # ── Deploy to Staging (auto on main) ───────────────────────
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.STAGING_HOST != ''
+    if: github.event_name == 'workflow_dispatch'
     environment: staging
     steps:
       - uses: actions/checkout@v4
@@ -251,7 +247,7 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: deploy-staging
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.PROD_HOST != ''
+    if: github.event_name == 'workflow_dispatch'
     environment: production  # GitHub environment with required reviewers
     steps:
       - uses: actions/checkout@v4

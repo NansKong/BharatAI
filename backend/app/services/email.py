@@ -2,6 +2,7 @@
 Email service — wraps smtplib with Jinja2 template rendering.
 When EMAIL_ENABLED=false (default in tests) emails are only logged, no SMTP needed.
 """
+
 from __future__ import annotations
 
 import logging

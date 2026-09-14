@@ -4,6 +4,7 @@ Export the FastAPI OpenAPI schema to docs/openapi.json.
 Run from the backend/ directory:
     python scripts/export_openapi.py
 """
+
 from __future__ import annotations
 
 import json

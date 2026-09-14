@@ -13,6 +13,7 @@ Run:
   locust -f locustfile.py --host=http://localhost:8000 \
          --users 500 --spawn-rate 50 --run-time 30m
 """
+
 from __future__ import annotations
 
 import random

@@ -5,6 +5,7 @@ Strips potentially dangerous HTML/JS from user-generated text fields
 using bleach. All user-input text should pass through `sanitize_text()`
 before being written to the database.
 """
+
 from __future__ import annotations
 
 import bleach

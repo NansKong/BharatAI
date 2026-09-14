@@ -2,6 +2,7 @@
 Mega seed v2: Updated for 2026 with fresh opportunities and verified URLs.
 Run: docker exec -it bharatai-backend-1 python -m scripts.seed_mega
 """
+
 import asyncio
 import hashlib
 import sys

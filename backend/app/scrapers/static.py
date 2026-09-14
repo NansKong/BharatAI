@@ -92,9 +92,11 @@ class StaticScraper(BaseScraper):
         return [
             ScrapedOpportunity(
                 title=fallback_title or "Opportunity",
-                description=fallback_body[:2000]
-                if fallback_body
-                else "No description available",
+                description=(
+                    fallback_body[:2000]
+                    if fallback_body
+                    else "No description available"
+                ),
                 source_url=self.url,
                 application_link=self.url,
             )

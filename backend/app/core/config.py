@@ -2,6 +2,7 @@
 BharatAI Backend – Application Settings
 Uses pydantic-settings for environment-based config with full type validation.
 """
+
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Optional

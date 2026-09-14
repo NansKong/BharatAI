@@ -1,6 +1,7 @@
 """
 Stdlib JSON logging configuration for API and worker processes.
 """
+
 from __future__ import annotations
 
 import json

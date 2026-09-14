@@ -2,6 +2,7 @@
 Redis async client with fallback methods for caching and token management.
 Guarantees high-availability even if Redis service is disconnected.
 """
+
 import logging
 from typing import Optional
 
