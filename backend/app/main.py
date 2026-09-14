@@ -130,9 +130,8 @@ def create_application() -> FastAPI:
         @app.middleware("http")
         async def hsts_middleware(request: Request, call_next):
             response = await call_next(request)
-            response.headers[
-                "Strict-Transport-Security"
-            ] = "max-age=31536000; includeSubDomains"
+            hsts_val = "max-age=31536000; includeSubDomains"
+            response.headers["Strict-Transport-Security"] = hsts_val
             return response
 
     # ── Request ID + Timing middleware ────────────────────────

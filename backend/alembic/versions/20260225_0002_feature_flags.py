@@ -66,8 +66,7 @@ def upgrade() -> None:
     )
 
     # Seed default flags
-    op.execute(
-        """
+    seed_sql = """
         INSERT INTO feature_flags (id, name, description, is_enabled, rollout_percentage, target_user_ids)
         VALUES
             (gen_random_uuid(), 'ai_classification',   'AI-powered opportunity classification',       false, 0, '[]'),
@@ -78,7 +77,7 @@ def upgrade() -> None:
             (gen_random_uuid(), 'browser_automation',   'Browser automation for form filling',         false, 0, '[]')
         ON CONFLICT (name) DO NOTHING;
     """
-    )
+    op.execute(seed_sql)
 
 
 def downgrade() -> None:
