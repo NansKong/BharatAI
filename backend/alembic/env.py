@@ -22,7 +22,9 @@ target_metadata = Base.metadata
 
 def get_sync_url() -> str:
     """Convert asyncpg URL to psycopg2 URL for synchronous Alembic use."""
-    url = settings.DATABASE_URL
+    import os
+
+    url = os.environ.get("DATABASE_URL") or settings.DATABASE_URL
     # Strip query params (e.g. ?ssl=false) — handled via connect_args below
     url = url.split("?")[0]
     return url.replace("postgresql+asyncpg://", "postgresql+psycopg2://")

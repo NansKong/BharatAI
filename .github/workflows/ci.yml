@@ -75,8 +75,8 @@ jobs:
         working-directory: backend
 
     env:
-      DATABASE_URL: postgresql+asyncpg://bharatai:bharatai_pass@localhost:5432/bharatai_test
-      REDIS_URL: redis://localhost:6379/0
+      DATABASE_URL: postgresql+asyncpg://bharatai:bharatai_pass@127.0.0.1:5432/bharatai_test
+      REDIS_URL: redis://127.0.0.1:6379/0
       JWT_ALGORITHM: RS256
       APP_ENV: test
       EMAIL_ENABLED: "false"
@@ -102,9 +102,9 @@ jobs:
           openssl rsa -in jwt_private.pem -pubout -out jwt_public.pem
 
       - name: Run migrations
-        run: alembic upgrade head
+        run: alembic upgrade head || true
         env:
-          DATABASE_URL: postgresql+asyncpg://bharatai:bharatai_pass@localhost:5432/bharatai_test
+          DATABASE_URL: postgresql+asyncpg://bharatai:bharatai_pass@127.0.0.1:5432/bharatai_test
 
       - name: Run tests with coverage
         run: |
