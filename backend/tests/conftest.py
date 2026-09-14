@@ -11,9 +11,9 @@ os.environ["APP_ENV"] = "test"
 # so any such param raises TypeError. Strip the query string entirely.
 os.environ["DATABASE_URL"] = os.environ.get(
     "DATABASE_URL",
-    "postgresql+asyncpg://bharatai:bharatai_pass@localhost:5432/bharatai_db",
+    "postgresql+asyncpg://bharatai:bharatai_pass@127.0.0.1:5432/bharatai_db",
 ).split("?")[0]
-os.environ["REDIS_URL"] = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+os.environ["REDIS_URL"] = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0")
 
 from app.core.database import AsyncSessionLocal, Base, close_all_databases, engine
 from app.core.redis import close_redis
