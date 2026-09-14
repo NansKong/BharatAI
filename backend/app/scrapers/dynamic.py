@@ -1,16 +1,37 @@
-"""Dynamic-page scraper using Playwright."""
+"""Dynamic-page scraper with Playwright support and HTTP fallback."""
 
+import logging
 from typing import Optional
 
 from app.scrapers.base import BaseScraper, ScrapedOpportunity
 from app.scrapers.static import StaticScraper
-from playwright.async_api import async_playwright
+
+logger = logging.getLogger(__name__)
+
+try:
+    from playwright.async_api import async_playwright
+
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
 
 
 class DynamicScraper(BaseScraper):
-    """Scraper for JavaScript-rendered pages."""
+    """Scraper for JavaScript-rendered pages with Playwright or httpx fallback."""
 
     async def fetch_html(self, proxy: Optional[str] = None) -> str:
+        if not PLAYWRIGHT_AVAILABLE:
+            logger.info(
+                "Playwright not installed, falling back to static fetcher for %s",
+                self.url,
+            )
+            static_scraper = StaticScraper(
+                url=self.url,
+                scrape_type=self.scrape_type,
+                timeout_seconds=self.timeout_seconds,
+            )
+            return await static_scraper.fetch_html(proxy=proxy)
+
         launch_kwargs = {"headless": True}
         if proxy:
             launch_kwargs["proxy"] = {"server": proxy}

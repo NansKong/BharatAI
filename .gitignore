@@ -12,41 +12,20 @@ dist/
 .venv/
 venv/
 env/
-.env
-.env.*
-!.env.example
 pip-wheel-metadata/
 .pytest_cache/
 .coverage
 coverage.xml
+coverage/
 htmlcov/
 .mypy_cache/
 .ruff_cache/
+.ipynb_checkpoints/
 
-# ── Node / Next.js ──────────────────────────────────────
-node_modules/
-.next/
-out/
-.npm
-.yarn/
-*.tsbuildinfo
-next-env.d.ts
-
-# ── Docker ──────────────────────────────────────────────
-# Don't ignore docker-compose files on purpose
-
-# ── OS ──────────────────────────────────────────────────
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# ── IDE ──────────────────────────────────────────────────
-.vscode/settings.json
-.idea/
-*.swp
-*.swo
-
-# ── Secrets ──────────────────────────────────────────────
+# ── Environment & Secrets ──────────────────────────────
+.env
+.env.*
+!.env.example
 *.pem
 *.key
 *.cert
@@ -54,17 +33,56 @@ secrets/
 jwt_private.pem
 jwt_public.pem
 
-# ── Uploads / ML Models ──────────────────────────────────
+# ── Node / Next.js / Frontend ─────────────────────────
+node_modules/
+.next/
+out/
+.npm
+.yarn/
+.pnp
+.pnp.*
+*.tsbuildinfo
+next-env.d.ts
+.vercel/
+
+# ── Temporary & Cache Files ───────────────────────────
+.tmp/
+tmp/
+*.tmp
+*.bak
+*.swp
+*.swo
+.cache/
+
+# ── OS Generated Files ────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs & Tools ──────────────────────────────────────
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.antigravity/
+.gemini/
+
+# ── Uploads & ML Artifacts ────────────────────────────
 uploads/
 models/
 *.faiss
 *.pth
 *.bin
+*.onnx
 
-# ── Logs ────────────────────────────────────────────────
+# ── Logs & Celery ─────────────────────────────────────
 *.log
 logs/
+celerybeat-schedule*
 
-# ── Test artifacts ───────────────────────────────────────
+# ── Test Artifacts & Benchmarks ───────────────────────
 .locust/
 load_test_results/
+test-results/
+playwright-report/
+blob-report/

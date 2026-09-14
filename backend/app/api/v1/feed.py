@@ -8,10 +8,12 @@ from typing import Optional
 from uuid import UUID
 
 from app.ai.embeddings import build_opportunity_text
-from app.ai.personalization import (compute_relevance_score,
-                                    deadline_urgency_score,
-                                    interest_match_score,
-                                    skill_similarity_score)
+from app.ai.personalization import (
+    compute_relevance_score,
+    deadline_urgency_score,
+    interest_match_score,
+    skill_similarity_score,
+)
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.redis import cache_get, cache_set
@@ -21,7 +23,7 @@ from app.models.opportunity import Opportunity
 from app.models.user import Profile
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
@@ -48,26 +50,29 @@ class FeedResponse(BaseModel):
     is_authenticated: bool = False
 
 
-async def _engagement_score(
-    db: AsyncSession, user_id: UUID, opportunity_domain: str
-) -> float:
+async def _get_user_engagement_map(
+    db: AsyncSession, user_id: UUID
+) -> tuple[int, dict[str, int]]:
+    """
+    Fetch user application counts in bulk to eliminate N+1 DB queries during feed scoring.
+    Returns (total_applications, {domain_code: count_in_domain}).
+    """
     total_stmt = select(func.count(Application.id)).where(
         Application.user_id == user_id
     )
     total = int((await db.execute(total_stmt)).scalar_one() or 0)
     if total == 0:
-        return 0.0
+        return 0, {}
 
-    matched_stmt = (
-        select(func.count(Application.id))
+    domain_counts_stmt = (
+        select(Opportunity.domain, func.count(Application.id))
         .join(Opportunity, Opportunity.id == Application.opportunity_id)
-        .where(
-            Application.user_id == user_id,
-            Opportunity.domain == opportunity_domain,
-        )
+        .where(Application.user_id == user_id)
+        .group_by(Opportunity.domain)
     )
-    matched = int((await db.execute(matched_stmt)).scalar_one() or 0)
-    return min(1.0, matched / max(1, total))
+    rows = (await db.execute(domain_counts_stmt)).all()
+    domain_map = {domain: int(cnt) for domain, cnt in rows if domain}
+    return total, domain_map
 
 
 def _serialize_items(items: list[FeedItemResponse]) -> list[dict]:
@@ -102,7 +107,7 @@ def _serialize_items(items: list[FeedItemResponse]) -> list[dict]:
     ),
 )
 async def get_feed(
-    limit: int = Query(20, ge=1, le=100, description="Max opportunities to return"),
+    limit: int = Query(20, ge=1, le=200, description="Max opportunities to return"),
     domain: Optional[str] = Query(
         None, description="Filter by domain code (e.g. cs, ai_ds)"
     ),
@@ -124,10 +129,16 @@ async def get_feed(
             is_authenticated=is_authenticated,
         )
 
-    # Build base query with optional domain filter
+    # Build base query with optional domain filter (excluding past deadlines!)
     stmt = (
         select(Opportunity)
-        .where(Opportunity.is_active.is_(True))
+        .where(
+            Opportunity.is_active.is_(True),
+            or_(
+                Opportunity.deadline.is_(None),
+                Opportunity.deadline >= func.now(),
+            ),
+        )
         .order_by(
             Opportunity.deadline.is_(None),
             Opportunity.deadline.asc(),
@@ -163,6 +174,9 @@ async def get_feed(
             for opp in opportunities[:limit]:
                 items.append(_make_item(opp, 0.0, is_authenticated=True))
         else:
+            total_apps, domain_apps_map = await _get_user_engagement_map(
+                db, current_user.id
+            )
             scored: list[tuple[float, Opportunity]] = []
             for opp in opportunities:
                 opp_text = build_opportunity_text(
@@ -178,7 +192,11 @@ async def get_feed(
                     opportunity_text=opp_text,
                 )
                 skills = skill_similarity_score(profile.skills or [], opp_text)
-                engagement = await _engagement_score(db, current_user.id, opp.domain)
+                if total_apps == 0:
+                    engagement = 0.0
+                else:
+                    matched = domain_apps_map.get(opp.domain, 0)
+                    engagement = min(1.0, matched / max(1, total_apps))
                 urgency = deadline_urgency_score(opp.deadline)
                 score = compute_relevance_score(
                     interest_match=interest,

@@ -3,10 +3,83 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 
 from app.workers.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
+
+
+# Keyword -> canonical domain key. Multi-word entries are matched as phrases;
+# single-word entries are matched against whole words only, never as substrings
+# ("me" must not match "manage*me*nt", "cs" must not match "economi*cs*").
+DOMAIN_KEY_MAP = {
+    "ai": "ai_ds",
+    "ds": "ai_ds",
+    "data science": "ai_ds",
+    "machine learning": "ai_ds",
+    "artificial intelligence": "ai_ds",
+    "cs": "cs",
+    "computer science": "cs",
+    "it": "cs",
+    "information technology": "cs",
+    "software": "cs",
+    "ece": "ece",
+    "electronics": "ece",
+    "electrical": "ece",
+    "me": "me",
+    "mechanical": "me",
+    "civil": "civil",
+    "biotech": "biotech",
+    "biotechnology": "biotech",
+    "law": "law",
+    "legal": "law",
+    "management": "management",
+    "mba": "management",
+    "bba": "management",
+    "business": "management",
+    "finance": "finance",
+    "financial": "finance",
+    "economics": "finance",
+    "humanities": "humanities",
+    "arts": "humanities",
+    "govt": "govt",
+    "government": "govt",
+    "policy": "govt",
+}
+
+
+def _match_domain(text: str) -> str | None:
+    """Return the domain key for ``text``, matching phrases before single words."""
+    lowered = text.lower()
+    for kw, key in DOMAIN_KEY_MAP.items():
+        if " " in kw and kw in lowered:
+            return key
+    words = set(re.findall(r"[a-z]+", lowered))
+    for kw, key in DOMAIN_KEY_MAP.items():
+        if " " not in kw and kw in words:
+            return key
+    return None
+
+
+def _resolve_user_domain(user, profile=None) -> str:
+    """
+    Infer user's academic domain from degree, profile interests, or skills.
+    Returns a canonical domain key (e.g., 'ai_ds', 'cs', 'management', 'finance')
+    or 'unclassified' if undetermined.
+    """
+    if user and user.degree:
+        matched = _match_domain(user.degree)
+        if matched:
+            return matched
+
+    if profile:
+        for value in (profile.interests or []) + (profile.skills or []):
+            matched = _match_domain(str(value))
+            if matched:
+                return matched
+
+    return "unclassified"
 
 
 @celery_app.task(name="incoscore.update", bind=True, max_retries=3)
@@ -56,9 +129,13 @@ def update_incoscore(self, user_id: str) -> dict:
                 or 0
             )
 
-            domain = (
-                user.college or "unclassified"
-            ).lower()  # use preferred_domain when available
+            from app.models.user import Profile
+
+            profile = (
+                await db.execute(select(Profile).where(Profile.user_id == user_id))
+            ).scalar_one_or_none()
+
+            domain = _resolve_user_domain(user, profile)
             sc = compute_incoscore(
                 list(achievements), domain=domain, community_post_count=post_count
             )

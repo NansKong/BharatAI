@@ -34,6 +34,40 @@ async def lifespan(app: FastAPI):
     await init_redis()
     logger.info("Redis connection established")
 
+    # Auto-populate live opportunities on startup if DB is empty
+    async def _auto_seed_if_empty():
+        try:
+            from app.core.database import AsyncSessionLocal
+            from app.models.opportunity import Opportunity
+            from sqlalchemy import func, select
+
+            async with AsyncSessionLocal() as db:
+                count = (
+                    await db.execute(
+                        select(func.count(Opportunity.id)).where(
+                            Opportunity.is_active.is_(True)
+                        )
+                    )
+                ).scalar_one()
+                if count == 0:
+                    logger.info(
+                        "Zero active opportunities found on startup. Auto-populating live opportunities..."
+                    )
+                    from app.workers.scrape_tasks import _run_live_ingestion
+
+                    res = await _run_live_ingestion()
+                    logger.info("Auto-population complete on startup", result=res)
+                else:
+                    logger.info(
+                        "Active opportunities verified in database", active_count=count
+                    )
+        except Exception as e:
+            logger.warning("Startup opportunity check note", error=str(e))
+
+    import asyncio
+
+    asyncio.create_task(_auto_seed_if_empty())
+
     logger.info("BharatAI backend started successfully")
 
     yield
@@ -60,14 +94,25 @@ def create_application() -> FastAPI:
     if settings.PROMETHEUS_ENABLED:
         Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
+    cors_origins = list(
+        set(
+            settings.CORS_ORIGINS
+            + [
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "http://localhost:8000",
+            ]
+        )
+    )
+
     # ── Middleware ────────────────────────────────────────────
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
+        allow_origins=cors_origins,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
-        expose_headers=["X-Request-ID", "X-RateLimit-Limit", "X-RateLimit-Remaining"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+        expose_headers=["*"],
     )
     app.add_middleware(GZipMiddleware, minimum_size=1000)
 
@@ -112,9 +157,19 @@ def create_application() -> FastAPI:
         return response
 
     # ── Routers ───────────────────────────────────────────────
-    from app.api.v1 import (admin, applications, auth, community,
-                            feature_flags, feed, incoscore, notifications,
-                            opportunities, profile, users)
+    from app.api.v1 import (
+        admin,
+        applications,
+        auth,
+        community,
+        feature_flags,
+        feed,
+        incoscore,
+        notifications,
+        opportunities,
+        profile,
+        users,
+    )
 
     api_prefix = "/api/v1"
     app.include_router(

@@ -26,64 +26,64 @@ SOURCE_PROFILES: tuple[SourceProfile, ...] = (
     SourceProfile(
         key="iit_bombay_events",
         scrape_type="static",
-        name_markers=("iit bombay",),
+        name_markers=("iit bombay", "iitb"),
         url_markers=("iitb.ac.in",),
-        item_selector=".iitb-event",
-        title_selector="h2, h3, .title",
-        description_selector=".summary, p",
+        item_selector=".views-row, .event-list-item, article, .node--type-event, .field-content",
+        title_selector="h2, h3, h4, .title, a",
+        description_selector=".summary, p, .field--name-body",
     ),
     SourceProfile(
         key="iit_delhi_opportunities",
         scrape_type="static",
-        name_markers=("iit delhi",),
+        name_markers=("iit delhi", "iitd"),
         url_markers=("iitd.ac.in",),
-        item_selector=".iitd-opportunity",
-        title_selector="h2, h3, .title",
-        description_selector=".summary, p",
+        item_selector=".news-item, .post-item, article, .event-box, .notice-item, .media",
+        title_selector="h2, h3, h4, .title, .heading, a",
+        description_selector=".summary, p, .description",
     ),
     SourceProfile(
         key="iisc_announcements",
         scrape_type="static",
         name_markers=("iisc",),
         url_markers=("iisc.ac.in",),
-        item_selector=".iisc-announcement",
-        title_selector="h2, h3, .title",
-        description_selector=".summary, p",
+        item_selector="article, .vc_grid-item, .entry-box, .news-card, .announcement-item",
+        title_selector="h2, h3, .entry-title, .vc_gitem-post-data-source-post_title, a",
+        description_selector=".summary, p, .vc_gitem-post-data-source-post_excerpt",
     ),
     SourceProfile(
         key="aicte_scholarships",
         scrape_type="static",
         name_markers=("aicte",),
         url_markers=("aicte-india.org",),
-        item_selector=".aicte-scheme",
-        title_selector="h2, h3, .title",
-        description_selector=".summary, p",
+        item_selector=".scheme-card, .scheme-item, table.views-table tr, .card, article",
+        title_selector="h2, h3, h4, .title, td a, a.scheme-title",
+        description_selector=".summary, p, td",
     ),
     SourceProfile(
         key="startup_india_programs",
         scrape_type="static",
-        name_markers=("startup india",),
+        name_markers=("startup india", "startupindia"),
         url_markers=("startupindia.gov.in",),
-        item_selector=".startup-program",
-        title_selector="h2, h3, .title",
-        description_selector=".summary, p",
+        item_selector=".scheme-card, .initiative-card, .program-card, article, .card",
+        title_selector="h2, h3, h4, .title, .card-title, a",
+        description_selector=".summary, p, .card-text, .desc",
     ),
     SourceProfile(
         key="drdo_recruitment",
         scrape_type="static",
         name_markers=("drdo",),
         url_markers=("drdo.gov.in",),
-        item_selector=".drdo-opening",
-        title_selector="h2, h3, .title",
-        description_selector=".summary, p",
+        item_selector="table tr, .views-row, article, .career-item",
+        title_selector="h2, h3, h4, .title, td a, a",
+        description_selector=".summary, p, td",
     ),
     SourceProfile(
         key="sih_portal",
         scrape_type="dynamic",
         name_markers=("smart india hackathon", "sih"),
         url_markers=("sih.gov.in",),
-        item_selector=".sih-challenge",
-        title_selector="h2, h3, .title",
+        item_selector=".challenge-card, .news-ticker li, article, .announcement-box, .card",
+        title_selector="h2, h3, h4, .title, a",
         description_selector=".summary, p",
     ),
     SourceProfile(
@@ -91,11 +91,24 @@ SOURCE_PROFILES: tuple[SourceProfile, ...] = (
         scrape_type="dynamic",
         name_markers=("unstop",),
         url_markers=("unstop.com",),
-        item_selector=".unstop-card",
-        title_selector="h2, h3, .title",
-        description_selector=".summary, p",
+        item_selector=".opportunity_card, .double-card, .card_wrapper, article",
+        title_selector="h2, h3, h4, .title, .heading",
+        description_selector=".summary, p, .description",
     ),
 )
+
+
+NOISE_CONTAINERS = {"nav", "header", "footer", "aside"}
+NOISE_CLASSES = {
+    "menu",
+    "navbar",
+    "nav",
+    "sidebar",
+    "footer",
+    "header",
+    "breadcrumbs",
+    "pagination",
+}
 
 
 def _normalize(value: str) -> str:
@@ -114,6 +127,17 @@ def get_source_profile(source_name: str, source_url: str) -> Optional[SourceProf
     return None
 
 
+def _is_noisy_node(node) -> bool:
+    """Check if node is part of navigation, header, or footer boilerplate."""
+    for parent in node.parents:
+        if parent.name in NOISE_CONTAINERS:
+            return True
+        parent_classes = set(parent.get("class", []))
+        if parent_classes.intersection(NOISE_CLASSES):
+            return True
+    return False
+
+
 def _parse_with_profile(
     html: str, base_url: str, profile: SourceProfile
 ) -> list[ScrapedOpportunity]:
@@ -125,6 +149,9 @@ def _parse_with_profile(
     results: list[ScrapedOpportunity] = []
     seen: set[str] = set()
     for node in nodes:
+        if _is_noisy_node(node):
+            continue
+
         title_node = node.select_one(profile.title_selector)
         desc_node = node.select_one(profile.description_selector)
         link_node = node.select_one(profile.link_selector)
@@ -137,13 +164,15 @@ def _parse_with_profile(
             if desc_node
             else node.get_text(" ", strip=True)
         )
-        if not title:
+        if not title or len(title) < 5:
             continue
         title_key = title.lower()
         if title_key in seen:
             continue
         seen.add(title_key)
-        if len(description) < 20:
+
+        # Require reasonable content depth
+        if len(description) < 15:
             continue
 
         source_url = base_url

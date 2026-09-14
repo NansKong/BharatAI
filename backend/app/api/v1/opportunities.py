@@ -36,6 +36,11 @@ VALID_DOMAINS = {
     "govt",
     "unclassified",
 }
+
+# Accepted input spellings that map onto a canonical VALID_DOMAINS value.
+# The DB enforces ck_opportunity_domain over the canonical set, so anything
+# persisted must be normalized through here first.
+DOMAIN_ALIASES = {"govt_policy": "govt"}
 CURSOR_DEADLINE_MAX = datetime(9999, 12, 31, tzinfo=timezone.utc)
 
 
@@ -43,6 +48,7 @@ def _normalize_domain(value: Optional[str]) -> Optional[str]:
     if value is None:
         return None
     normalized = value.strip().lower()
+    normalized = DOMAIN_ALIASES.get(normalized, normalized)
     if normalized not in VALID_DOMAINS:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -70,6 +76,7 @@ class OpportunityCreateRequest(BaseModel):
     @classmethod
     def validate_domain(cls, value: str) -> str:
         normalized = value.strip().lower()
+        normalized = DOMAIN_ALIASES.get(normalized, normalized)
         if normalized not in VALID_DOMAINS:
             raise ValueError(
                 f"Invalid domain. Allowed: {', '.join(sorted(VALID_DOMAINS))}"
@@ -82,6 +89,7 @@ class OpportunityCreateRequest(BaseModel):
         if value is None:
             return None
         normalized = value.strip().lower()
+        normalized = DOMAIN_ALIASES.get(normalized, normalized)
         if normalized not in VALID_DOMAINS:
             raise ValueError(
                 f"Invalid secondary_domain. Allowed: {', '.join(sorted(VALID_DOMAINS))}"
@@ -110,6 +118,7 @@ class OpportunityUpdateRequest(BaseModel):
         if value is None:
             return None
         normalized = value.strip().lower()
+        normalized = DOMAIN_ALIASES.get(normalized, normalized)
         if normalized not in VALID_DOMAINS:
             raise ValueError(
                 f"Invalid domain. Allowed: {', '.join(sorted(VALID_DOMAINS))}"
@@ -122,6 +131,7 @@ class OpportunityUpdateRequest(BaseModel):
         if value is None:
             return None
         normalized = value.strip().lower()
+        normalized = DOMAIN_ALIASES.get(normalized, normalized)
         if normalized not in VALID_DOMAINS:
             raise ValueError(
                 f"Invalid secondary_domain. Allowed: {', '.join(sorted(VALID_DOMAINS))}"

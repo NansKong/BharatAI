@@ -7,6 +7,19 @@ import httpx
 from app.scrapers.base import BaseScraper, ScrapedOpportunity
 from bs4 import BeautifulSoup
 
+NOISE_CONTAINERS = {"nav", "header", "footer", "aside"}
+NOISE_CLASSES = {"menu", "navbar", "nav", "sidebar", "footer", "header", "breadcrumbs"}
+
+
+def _is_noisy(node) -> bool:
+    for parent in node.parents:
+        if parent.name in NOISE_CONTAINERS:
+            return True
+        p_classes = set(parent.get("class", []))
+        if p_classes.intersection(NOISE_CLASSES):
+            return True
+    return False
+
 
 class StaticScraper(BaseScraper):
     """Scraper for static HTML sources."""
@@ -27,7 +40,7 @@ class StaticScraper(BaseScraper):
     def parse(self, html: str) -> list[ScrapedOpportunity]:
         soup = BeautifulSoup(html, "html.parser")
         candidates = soup.select(
-            "article, .opportunity, .opportunity-card, li, .card, .item"
+            "article, .opportunity, .opportunity-card, .card, .views-row, .news-item"
         )
         if not candidates:
             body = soup.find("body")
@@ -37,6 +50,9 @@ class StaticScraper(BaseScraper):
         results: list[ScrapedOpportunity] = []
         seen_titles: set[str] = set()
         for node in candidates:
+            if _is_noisy(node):
+                continue
+
             title_node = node.find(["h1", "h2", "h3", "h4", "a", "strong"])
             title = BaseScraper.sanitize_text(
                 title_node.get_text(" ", strip=True) if title_node else ""
@@ -45,13 +61,13 @@ class StaticScraper(BaseScraper):
 
             if not title and description:
                 title = description[:120]
-            if not title:
+            if not title or len(title) < 5:
                 continue
             if title.lower() in seen_titles:
                 continue
             seen_titles.add(title.lower())
 
-            if len(description) < 20:
+            if len(description) < 25:
                 continue
 
             link_tag = node.find("a", href=True)

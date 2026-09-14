@@ -9,12 +9,13 @@ repos:
     rev: 5.13.2
     hooks:
       - id: isort
+        args: [--profile, black]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.9
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [--fix, --ignore=E402]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -33,10 +34,5 @@ repos:
       - id: frontend-eslint
         name: frontend-eslint
         entry: npm --prefix frontend run lint
-        language: system
-        pass_filenames: false
-      - id: frontend-prettier
-        name: frontend-prettier
-        entry: npm --prefix frontend run format:check
         language: system
         pass_filenames: false

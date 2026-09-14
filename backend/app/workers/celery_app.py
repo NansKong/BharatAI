@@ -1,6 +1,8 @@
 """
 Celery application configuration.
 """
+import sys
+
 from app.core.config import settings
 from celery import Celery
 from celery.schedules import crontab
@@ -17,6 +19,7 @@ celery_app = Celery(
 )
 
 celery_app.conf.update(
+    worker_pool="solo" if sys.platform == "win32" else "prefork",
     task_serializer="json",
     accept_content=["json"],
     result_serializer="json",
@@ -32,6 +35,13 @@ celery_app.conf.update(
     },
     task_default_queue="default",
     beat_schedule={
+        "ingest-live-opportunities-production": {
+            "task": "app.workers.scrape_tasks.ingest_live_opportunities_task",
+            "schedule": crontab(
+                minute=0, hour="0,6,12,18"
+            ),  # Runs 4x daily at 00:00, 06:00, 12:00, 18:00 IST
+            "options": {"queue": "scraping"},
+        },
         "scrape-all-sources": {
             "task": "app.workers.scrape_tasks.scrape_all_sources",
             "schedule": crontab(minute=f"*/{settings.CELERY_SCRAPE_INTERVAL_MINUTES}"),

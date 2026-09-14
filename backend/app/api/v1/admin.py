@@ -7,7 +7,10 @@ from uuid import UUID
 from app.core.database import get_db
 from app.core.security import require_admin
 from app.models.opportunity import MonitoredSource, Opportunity
-from app.workers.scrape_tasks import scrape_single_source
+from app.workers.scrape_tasks import (
+    ingest_live_opportunities_task,
+    scrape_single_source,
+)
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import AnyHttpUrl, BaseModel, Field, field_validator
 from sqlalchemy import func, select
@@ -190,6 +193,30 @@ async def trigger_source_scrape(
             detail="Failed to queue scrape task",
         )
     return SourceTriggerResponse(status="queued", source_id=source.id, task_id=task.id)
+
+
+@router.post(
+    "/ingest-live-opportunities",
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Trigger full multi-source live ingestion manually (admin only)",
+)
+async def trigger_live_ingestion(
+    admin=Depends(require_admin),
+):
+    """Triggers the production multi-source opportunity ingestion pipeline."""
+    del admin
+    try:
+        task = ingest_live_opportunities_task.delay()
+        return {
+            "status": "queued",
+            "task_id": task.id,
+            "message": "Live opportunity ingestion task queued successfully",
+        }
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Failed to queue live ingestion task: {exc}",
+        )
 
 
 @router.get(

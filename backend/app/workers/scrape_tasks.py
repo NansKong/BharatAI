@@ -9,11 +9,13 @@ from uuid import UUID
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal, close_database
 from app.models.incoscore import Notification
-from app.models.opportunity import (MonitoredSource, Opportunity,
-                                    ScrapeDeadLetter)
+from app.models.opportunity import MonitoredSource, Opportunity, ScrapeDeadLetter
 from app.models.user import User
-from app.scrapers import (build_source_scraper, compute_content_hash,
-                          find_title_duplicate)
+from app.scrapers import (
+    build_source_scraper,
+    compute_content_hash,
+    find_title_duplicate,
+)
 from app.scrapers.base import BaseScraper
 from app.workers.ai_tasks import classify_opportunity
 from app.workers.celery_app import celery_app
@@ -500,3 +502,240 @@ def check_url_health(self):
         return result
     finally:
         r.delete(LOCK_KEY)
+
+
+# ── Production Opportunity Ingestion Task ───────────────────────────────────
+
+
+async def _run_live_ingestion() -> dict:
+    """Production ingestion routine for real-time opportunities across Unstop, Devfolio & RSS."""
+    from app.core.redis import cache_delete_pattern, close_redis, init_redis
+    from app.scrapers.base import BaseScraper
+    from app.scrapers.devfolio_api import DevfolioAPIScraper
+    from app.scrapers.indian_research_scraper import IndianResearchScraper
+    from app.scrapers.internship_api import InternshipAPIScraper
+    from app.scrapers.rss_scraper import RSSScraper
+    from app.scrapers.unstop_api import UnstopAPIScraper
+    from sqlalchemy import func, update
+
+    real_items = []
+
+    # 1. Unstop API (10 pages per category including internships, hackathons, jobs)
+    try:
+        u_scraper = UnstopAPIScraper(
+            max_pages=10, url="https://unstop.com", scrape_type="dynamic"
+        )
+        u_items = await u_scraper.fetch_real_opportunities()
+        real_items.extend(u_items)
+    except Exception as e:
+        logger.warning(f"Live ingestion Unstop error: {e}")
+
+    # 2. Devfolio API (10 pages)
+    try:
+        d_scraper = DevfolioAPIScraper(
+            max_pages=10, url="https://devfolio.co", scrape_type="dynamic"
+        )
+        d_items = await d_scraper.fetch_real_opportunities()
+        real_items.extend(d_items)
+    except Exception as e:
+        logger.warning(f"Live ingestion Devfolio error: {e}")
+
+    # 3. Premier Indian Research Fellowships & IIT Academic Internships
+    try:
+        res_scraper = IndianResearchScraper(
+            url="https://ird.iitd.ac.in", scrape_type="dynamic"
+        )
+        res_items = await res_scraper.fetch_real_opportunities()
+        real_items.extend(res_items)
+    except Exception as e:
+        logger.warning(f"Live ingestion Indian Research error: {e}")
+
+    # 4. Global Developer Internship APIs (Filtered strictly for India context)
+    try:
+        i_scraper = InternshipAPIScraper(
+            url="https://remotive.com", scrape_type="dynamic"
+        )
+        i_items = await i_scraper.fetch_real_opportunities()
+        real_items.extend(i_items)
+    except Exception as e:
+        logger.warning(f"Live ingestion Internship API error: {e}")
+
+    # 5. Academic & Institutional RSS Feeds
+    try:
+        r_scraper = RSSScraper(url="https://opportunitydesk.org", scrape_type="static")
+        r_items = await r_scraper.fetch_real_opportunities()
+        real_items.extend(r_items)
+    except Exception as e:
+        logger.warning(f"Live ingestion RSS error: {e}")
+
+    inserted = 0
+    skipped_hash = 0
+
+    async with AsyncSessionLocal() as db:
+        for item in real_items:
+            # 1. Skip expired registrations
+            if BaseScraper.is_expired(item.deadline):
+                continue
+
+            # 2. Skip news blogs and clickbait aggregators
+            if BaseScraper.is_news_or_blog_url(
+                item.source_url
+            ) or BaseScraper.is_news_or_blog_url(item.application_link or ""):
+                continue
+
+            # 3. Ensure genuine India relevance
+            if not BaseScraper.is_genuine_india_opportunity(
+                item.title, item.description, item.institution or "", item.source_url
+            ):
+                continue
+
+            content_hash = compute_content_hash(
+                item.title, item.description, item.source_url
+            )
+            existing = (
+                await db.execute(
+                    select(Opportunity.id).where(
+                        Opportunity.content_hash == content_hash
+                    )
+                )
+            ).scalar_one_or_none()
+
+            if existing:
+                skipped_hash += 1
+                continue
+
+            text_lower = (item.title + " " + item.description).lower()
+            domain = "unclassified"
+            if any(
+                k in text_lower
+                for k in [
+                    "ai",
+                    "machine learning",
+                    "data science",
+                    "nlp",
+                    "deep learning",
+                    "robotics",
+                ]
+            ):
+                domain = "ai_ds"
+            elif any(
+                k in text_lower
+                for k in [
+                    "code",
+                    "coding",
+                    "software",
+                    "hackathon",
+                    "web",
+                    "app",
+                    "dev",
+                    "computer",
+                ]
+            ):
+                domain = "cs"
+            elif any(
+                k in text_lower
+                for k in ["electronics", "vlsi", "iot", "embedded", "hardware"]
+            ):
+                domain = "ece"
+            elif any(
+                k in text_lower
+                for k in [
+                    "mba",
+                    "finance",
+                    "marketing",
+                    "management",
+                    "business",
+                    "case study",
+                ]
+            ):
+                domain = "management"
+            elif any(
+                k in text_lower
+                for k in [
+                    "scholarship",
+                    "fellowship",
+                    "grant",
+                    "bursary",
+                    "dst",
+                    "serb",
+                    "fulbright",
+                    "policy",
+                ]
+            ):
+                domain = "govt"
+            elif any(k in text_lower for k in ["bio", "health", "pharma", "medical"]):
+                domain = "biotech"
+
+            opp = Opportunity(
+                title=BaseScraper.sanitize_text(item.title)[:500],
+                description=BaseScraper.sanitize_text(item.description),
+                institution=item.institution or "National Academic Institution",
+                domain=domain,
+                deadline=item.deadline,
+                source_url=item.source_url,
+                application_link=item.application_link or item.source_url,
+                eligibility=BaseScraper.sanitize_text(
+                    item.eligibility or "Open to all students"
+                ),
+                content_hash=content_hash,
+                is_active=True,
+                is_verified=True,
+                classification_confidence=0.95,
+            )
+            db.add(opp)
+            inserted += 1
+
+        # Retire expired items. NEVER hard-delete: applications.opportunity_id and
+        # autofill_logs.opportunity_id are ON DELETE CASCADE, so a DELETE here would
+        # silently destroy every user's application history for past-deadline items.
+        await db.execute(
+            update(Opportunity)
+            .where(
+                Opportunity.deadline < func.now(),
+                Opportunity.is_active.is_(True),
+            )
+            .values(is_active=False)
+        )
+        await db.commit()
+
+        total_active = (
+            await db.execute(
+                select(func.count(Opportunity.id)).where(
+                    Opportunity.is_active.is_(True)
+                )
+            )
+        ).scalar_one()
+
+    # Invalidate only the derived read caches. A blanket "*" would also wipe
+    # refresh_jti:* (the refresh-token whitelist -> mass forced logout) and
+    # blocklist:* (revoked access tokens -> revocation bypass), which live in the
+    # same Redis database.
+    try:
+        await init_redis()
+        for pattern in ("feed:*", "cache:opportunities:*", "cache:leaderboard:*"):
+            await cache_delete_pattern(pattern)
+        await close_redis()
+    except Exception as exc:
+        logger.warning(f"Live ingestion cache invalidation note: {exc}")
+
+    return {
+        "status": "success",
+        "inserted": inserted,
+        "skipped_hash": skipped_hash,
+        "total_active": total_active,
+    }
+
+
+@celery_app.task(
+    name="app.workers.scrape_tasks.ingest_live_opportunities_task", bind=True
+)
+def ingest_live_opportunities_task(self):
+    """Production automated Celery task for continuous live opportunity ingestion."""
+    logger.info("Starting production automated opportunity ingestion task")
+    try:
+        res = asyncio.run(_run_with_db_cleanup(_run_live_ingestion()))
+        logger.info(f"Production opportunity ingestion complete: {res}")
+        return res
+    except Exception as exc:
+        logger.exception(f"Production opportunity ingestion task failed: {exc}")
+        return {"status": "failure", "error": str(exc)}

@@ -31,7 +31,8 @@ _LABEL_TO_KEY: dict[str, str] = {
     "Management": "management",
     "Finance": "finance",
     "Humanities": "humanities",
-    "Government and Policy": "govt_policy",
+    # Must match ck_opportunity_domain in the DB ("govt", not "govt_policy").
+    "Government and Policy": "govt",
 }
 
 

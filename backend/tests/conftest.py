@@ -6,19 +6,16 @@ import pytest
 from fastapi.testclient import TestClient
 
 os.environ["APP_ENV"] = "test"
-os.environ["DATABASE_URL"] = (
-    os.environ.get(
-        "DATABASE_URL",
-        "postgresql+asyncpg://bharatai:bharatai_pass@localhost:5432/bharatai_db",
-    )
-    .replace("?ssl=false", "?sslmode=disable")
-    .split("?")[0]
-    + "?sslmode=disable"
-)
+# asyncpg does not accept libpq-style query args (``sslmode``/``ssl=false``);
+# SQLAlchemy passes URL query params straight through to ``asyncpg.connect()``,
+# so any such param raises TypeError. Strip the query string entirely.
+os.environ["DATABASE_URL"] = os.environ.get(
+    "DATABASE_URL",
+    "postgresql+asyncpg://bharatai:bharatai_pass@localhost:5432/bharatai_db",
+).split("?")[0]
 os.environ["REDIS_URL"] = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
-from app.core.database import (AsyncSessionLocal, Base, close_all_databases,
-                               engine)
+from app.core.database import AsyncSessionLocal, Base, close_all_databases, engine
 from app.core.redis import close_redis
 from app.core.security import create_access_token, hash_password
 from app.main import create_application

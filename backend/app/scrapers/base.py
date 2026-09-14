@@ -59,6 +59,128 @@ class BaseScraper(ABC):
         )
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
+    @staticmethod
+    def is_news_or_blog_url(url: str) -> bool:
+        """Identify news aggregators, blog sites, and clickbait article URLs."""
+        if not url:
+            return True
+        u = url.lower()
+        blacklisted_domains = [
+            "opportunitydesk.org",
+            "scholarship-positions.com",
+            "opportunitiescircle.com",
+            "youthop.com",
+            "blogspot.com",
+            "wordpress.com",
+            "medium.com",
+            "news.google.com",
+            "timesofindia",
+            "indiatimes.com",
+            "jagranjosh.com",
+            "careers360.com/news",
+            "shiksha.com/news",
+            "financialexpress.com",
+            "livemint.com",
+            "hindustantimes.com",
+            "indianexpress.com",
+        ]
+        return any(domain in u for domain in blacklisted_domains)
+
+    @staticmethod
+    def is_expired(deadline: Optional[datetime]) -> bool:
+        """Check if application deadline has already passed."""
+        if not deadline:
+            return False
+        from datetime import timezone
+
+        now = datetime.now(timezone.utc)
+        dl = deadline if deadline.tzinfo else deadline.replace(tzinfo=timezone.utc)
+        return dl < now
+
+    @staticmethod
+    def is_genuine_india_opportunity(
+        title: str, description: str, institution: str, url: str
+    ) -> bool:
+        """Check that the opportunity is genuine (not news blog) and India-relevant."""
+        if BaseScraper.is_news_or_blog_url(url):
+            return False
+
+        full_text = f"{title} {description} {institution}".lower()
+
+        # Blacklisted spam/news terms
+        if any(
+            term in full_text
+            for term in [
+                "read article",
+                "click here to read",
+                "latest news on",
+                "how to apply blog",
+            ]
+        ):
+            return False
+
+        # Positive India indicators
+        india_keywords = [
+            "india",
+            "iit",
+            "nit",
+            "iisc",
+            "iiit",
+            "iim",
+            "bits",
+            "drdo",
+            "isro",
+            "csir",
+            "tifr",
+            "iiser",
+            "aicte",
+            "dst",
+            "serb",
+            "unstop",
+            "devfolio",
+            "bengaluru",
+            "bangalore",
+            "delhi",
+            "mumbai",
+            "hyderabad",
+            "pune",
+            "chennai",
+            "kolkata",
+            "noida",
+            "gurugram",
+            "gurgaon",
+            "ahmedabad",
+            "indian",
+            "rs.",
+            "inr",
+            "stipend",
+            "lpa",
+        ]
+
+        # Explicit non-India check (ignore purely overseas local opportunities)
+        overseas_only = any(
+            loc in full_text
+            for loc in [
+                "usa only",
+                "uk resident only",
+                "canada only",
+                "germany only",
+                "australia only",
+            ]
+        )
+        if overseas_only:
+            return False
+
+        # Must have India context OR be from official Indian platforms/institutions
+        return (
+            any(k in full_text for k in india_keywords)
+            or ".ac.in" in url
+            or ".edu.in" in url
+            or ".gov.in" in url
+            or "unstop.com" in url
+            or "devfolio.co" in url
+        )
+
     def next_proxy(self) -> Optional[str]:
         if self._proxy_cycle is None:
             return None

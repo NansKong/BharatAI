@@ -1,0 +1,15 @@
+{
+  "title": "BharatAI Academic Opportunity Intelligence Platform Architecture & Knowledge Item",
+  "created_at": "2026-09-04T13:59:00Z",
+  "updated_at": "2026-09-04T16:36:00Z",
+  "version": "1.1.0",
+  "repository": "NansKong/BharatAI",
+  "workspace_path": "d:\\BharatAI",
+  "summary": "Comprehensive architectural and operational Knowledge Item for BharatAI: India's AI-powered academic opportunity intelligence platform. Covers Field Notes Neubrutalist visual redesign, persistent TopNav navigation bar across public and protected routes, FastAPI backend, Next.js 14 frontend, PostgreSQL database seeding (test students & admins), Redis offline resilience fallback, FAISS + Elasticsearch storage layers, zero-shot BART domain classifier, spaCy NLP resume parser, weighted relevance personalization feed, 1000-point InCoScore merit engine, anti-gaming velocity checks, multi-channel notification engine (Email + WebSocket), feature flag canary rollout system, and Docker/CI/CD deployment setup.",
+  "artifacts": [
+    "artifacts/architecture_and_backend.md",
+    "artifacts/ai_and_incoscore_engines.md",
+    "artifacts/frontend_and_infrastructure.md",
+    "artifacts/testing_deployment_roadmap.md"
+  ]
+}

@@ -168,3 +168,33 @@ def test_opportunity_invalid_cursor_rejected(client, create_user_token):
         params={"cursor": "not-a-valid-cursor"},
     )
     assert response.status_code == 422
+
+
+def test_government_domain_is_persistable_under_both_spellings(
+    client, create_user_token
+):
+    """``govt_policy`` is accepted as an alias but stored as the canonical
+    ``govt``, which is the only government value ``ck_opportunity_domain``
+    allows. Persisting ``govt_policy`` raises a CheckViolation -> 500."""
+    admin_token = create_user_token(role="admin")
+
+    for submitted in ("govt", "govt_policy", "GOVT_POLICY"):
+        response = client.post(
+            "/api/v1/opportunities",
+            headers=_auth_header(admin_token),
+            json=_opportunity_payload(
+                title=f"Policy Fellowship {uuid.uuid4().hex[:6]}",
+                domain=submitted,
+            ),
+        )
+        assert response.status_code == 201, (submitted, response.text)
+        assert response.json()["domain"] == "govt"
+
+
+def test_classifier_domain_keys_are_all_persistable(client, create_user_token):
+    """Every key the zero-shot classifier can write to ``Opportunity.domain``
+    must satisfy the DB check constraint."""
+    from app.ai.classifier import _LABEL_TO_KEY
+    from app.api.v1.opportunities import VALID_DOMAINS
+
+    assert set(_LABEL_TO_KEY.values()) <= VALID_DOMAINS
