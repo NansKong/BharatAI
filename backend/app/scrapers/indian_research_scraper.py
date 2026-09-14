@@ -7,8 +7,9 @@ import logging
 from typing import Optional
 
 import httpx
-from app.scrapers.base import BaseScraper, ScrapedOpportunity
 from bs4 import BeautifulSoup
+
+from app.scrapers.base import BaseScraper, ScrapedOpportunity
 
 logger = logging.getLogger(__name__)
 

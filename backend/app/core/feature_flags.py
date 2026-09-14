@@ -15,9 +15,10 @@ import json
 import logging
 from typing import Optional
 
-from app.core.redis import cache_get, cache_set
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.redis import cache_get, cache_set
 
 logger = logging.getLogger(__name__)
 

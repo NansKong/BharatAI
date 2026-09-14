@@ -1,5 +1,6 @@
-from app.api.v1 import auth as auth_module
 from fastapi.responses import RedirectResponse
+
+from app.api.v1 import auth as auth_module
 
 
 def _register_user(

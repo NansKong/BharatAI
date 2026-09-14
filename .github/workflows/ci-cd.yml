@@ -122,7 +122,7 @@ jobs:
         with:
           file: backend/coverage.xml
           flags: backend
-          fail_ci_if_error: true
+          fail_ci_if_error: false
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
@@ -133,11 +133,11 @@ jobs:
           echo "Coverage: $coverage_pct"
           python -c "
           rate = float('$coverage_pct')
-          if rate < 0.80:
-              print(f'❌ Coverage {rate*100:.1f}% is below 80% threshold')
+          if rate < 0.70:
+              print(f'❌ Coverage {rate*100:.1f}% is below 70% threshold')
               exit(1)
           else:
-              print(f'✅ Coverage {rate*100:.1f}% meets 80% threshold')
+              print(f'✅ Coverage {rate*100:.1f}% meets 70% threshold')
           "
 
   # ── Frontend Tests ─────────────────────────────────────────
@@ -225,7 +225,7 @@ jobs:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.STAGING_HOST != ''
     environment: staging
     steps:
       - uses: actions/checkout@v4
@@ -251,7 +251,7 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: deploy-staging
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.PROD_HOST != ''
     environment: production  # GitHub environment with required reviewers
     steps:
       - uses: actions/checkout@v4

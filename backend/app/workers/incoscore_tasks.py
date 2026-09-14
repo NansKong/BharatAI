@@ -90,13 +90,14 @@ def update_incoscore(self, user_id: str) -> dict:
     """
     import asyncio
 
+    from sqlalchemy import func, select
+
     from app.ai.incoscore import assign_badges, compute_incoscore
     from app.core.database import AsyncSessionLocal
     from app.models.application import Achievement
     from app.models.community import Post
     from app.models.incoscore import IncoScoreHistory
     from app.models.user import User
-    from sqlalchemy import func, select
 
     async def _run():
         async with AsyncSessionLocal() as db:

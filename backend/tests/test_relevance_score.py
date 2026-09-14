@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from app.ai.personalization import (compute_relevance_score,
-                                    deadline_urgency_score)
+from app.ai.personalization import compute_relevance_score, deadline_urgency_score
 
 
 def test_relevance_score_formula():

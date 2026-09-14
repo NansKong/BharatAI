@@ -11,10 +11,11 @@ import time
 import httpx
 
 sys.path.insert(0, ".")
+from sqlalchemy import select
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.models.opportunity import MonitoredSource
 from app.scrapers import build_source_scraper
-from sqlalchemy import select
 
 HEADERS = {
     "User-Agent": (

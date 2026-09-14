@@ -8,11 +8,12 @@ import asyncio
 import sys
 
 sys.path.insert(0, ".")
+from sqlalchemy import delete, func, select, update
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.core.redis import cache_delete_pattern, close_redis, init_redis
 from app.models.application import Application
 from app.models.opportunity import Opportunity
-from sqlalchemy import delete, func, select, update
 
 
 async def purge_expired():

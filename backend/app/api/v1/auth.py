@@ -3,18 +3,24 @@ Authentication API router: register, login, refresh, logout, Google OAuth.
 """
 from datetime import datetime, timezone
 
-from app.core.config import settings
-from app.core.database import get_db
-from app.core.redis import add_to_blocklist, cache_delete, cache_get, cache_set
-from app.core.security import (create_access_token, create_refresh_token,
-                               decode_token, get_current_user_payload,
-                               hash_password, verify_password)
-from app.models.user import Profile, User
 from authlib.integrations.starlette_client import OAuth
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.config import settings
+from app.core.database import get_db
+from app.core.redis import add_to_blocklist, cache_delete, cache_get, cache_set
+from app.core.security import (
+    create_access_token,
+    create_refresh_token,
+    decode_token,
+    get_current_user_payload,
+    hash_password,
+    verify_password,
+)
+from app.models.user import Profile, User
 
 router = APIRouter()
 
@@ -147,7 +153,7 @@ async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
 )
 async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
-        select(User).where(User.email == body.email, User.is_active == True)
+        select(User).where(User.email == body.email, User.is_active.is_(True))
     )
     user = result.scalar_one_or_none()
 
@@ -202,7 +208,7 @@ async def refresh_token(body: RefreshRequest, db: AsyncSession = Depends(get_db)
 
     # Load user
     result = await db.execute(
-        select(User).where(User.id == user_id, User.is_active == True)
+        select(User).where(User.id == user_id, User.is_active.is_(True))
     )
     user = result.scalar_one_or_none()
     if not user:

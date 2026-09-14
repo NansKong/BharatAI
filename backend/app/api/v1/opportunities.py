@@ -8,16 +8,17 @@ from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
 
-from app.core.database import get_db
-from app.core.redis import cache_delete_pattern
-from app.core.security import get_current_user, require_admin
-from app.models.opportunity import Opportunity
-from app.workers.ai_tasks import classify_opportunity
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from pydantic import AnyHttpUrl, BaseModel, Field, field_validator
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
+from app.core.redis import cache_delete_pattern
+from app.core.security import get_current_user, require_admin
+from app.models.opportunity import Opportunity
+from app.workers.ai_tasks import classify_opportunity
 
 router = APIRouter()
 logger = logging.getLogger(__name__)

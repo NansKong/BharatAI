@@ -4,6 +4,12 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import AnyHttpUrl, BaseModel, Field, field_validator
+from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_db
 from app.core.security import require_admin
 from app.models.opportunity import MonitoredSource, Opportunity
@@ -11,11 +17,6 @@ from app.workers.scrape_tasks import (
     ingest_live_opportunities_task,
     scrape_single_source,
 )
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import AnyHttpUrl, BaseModel, Field, field_validator
-from sqlalchemy import func, select
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

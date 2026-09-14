@@ -6,6 +6,11 @@ import logging
 from datetime import datetime, timezone
 from uuid import UUID
 
+from celery.exceptions import MaxRetriesExceededError, Retry
+from prometheus_client import Counter
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal, close_database
 from app.models.incoscore import Notification
@@ -19,10 +24,6 @@ from app.scrapers import (
 from app.scrapers.base import BaseScraper
 from app.workers.ai_tasks import classify_opportunity
 from app.workers.celery_app import celery_app
-from celery.exceptions import MaxRetriesExceededError, Retry
-from prometheus_client import Counter
-from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
 
 logger = logging.getLogger(__name__)
 
@@ -509,6 +510,8 @@ def check_url_health(self):
 
 async def _run_live_ingestion() -> dict:
     """Production ingestion routine for real-time opportunities across Unstop, Devfolio & RSS."""
+    from sqlalchemy import func, update
+
     from app.core.redis import cache_delete_pattern, close_redis, init_redis
     from app.scrapers.base import BaseScraper
     from app.scrapers.devfolio_api import DevfolioAPIScraper
@@ -516,7 +519,6 @@ async def _run_live_ingestion() -> dict:
     from app.scrapers.internship_api import InternshipAPIScraper
     from app.scrapers.rss_scraper import RSSScraper
     from app.scrapers.unstop_api import UnstopAPIScraper
-    from sqlalchemy import func, update
 
     real_items = []
 

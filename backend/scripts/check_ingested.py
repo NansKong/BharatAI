@@ -2,9 +2,10 @@ import asyncio
 import sys
 
 sys.path.insert(0, ".")
+from sqlalchemy import select
+
 from app.core.database import AsyncSessionLocal, close_database
 from app.models.opportunity import Opportunity
-from sqlalchemy import select
 
 
 async def main():

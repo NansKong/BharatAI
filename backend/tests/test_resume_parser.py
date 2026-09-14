@@ -1,4 +1,5 @@
 import fitz
+
 from app.ai.resume_parser import extract_text_from_pdf_bytes, parse_resume
 
 

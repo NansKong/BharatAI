@@ -4,10 +4,11 @@ from dataclasses import dataclass
 from typing import Optional
 from urllib.parse import urljoin
 
+from bs4 import BeautifulSoup
+
 from app.scrapers.base import BaseScraper, ScrapedOpportunity
 from app.scrapers.dynamic import DynamicScraper
 from app.scrapers.static import StaticScraper
-from bs4 import BeautifulSoup
 
 
 @dataclass(frozen=True, slots=True)

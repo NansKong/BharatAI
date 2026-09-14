@@ -9,12 +9,13 @@ import logging
 from typing import Optional
 from uuid import UUID
 
-from app.core.database import get_db
-from app.core.security import get_current_user
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
+from app.core.security import get_current_user
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -67,9 +68,10 @@ async def _leaderboard_query(
     limit: int,
     offset: int,
 ) -> LeaderboardResponse:
+    from sqlalchemy import and_
+
     from app.models.incoscore import IncoScoreHistory
     from app.models.user import User
-    from sqlalchemy import and_
 
     # Sub-query: latest score per user
     latest_sub = (

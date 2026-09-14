@@ -18,12 +18,13 @@ import sys
 from datetime import datetime, timezone
 
 sys.path.insert(0, ".")
+from sqlalchemy import delete, func, select
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.core.redis import cache_delete_pattern, close_redis, init_redis
 from app.models.opportunity import Opportunity
 from app.scrapers.base import BaseScraper
 from app.workers.scrape_tasks import _run_live_ingestion
-from sqlalchemy import delete, func, select
 
 
 async def purge_and_reingest():

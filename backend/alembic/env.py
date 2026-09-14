@@ -4,12 +4,13 @@ The running app uses asyncpg; alembic uses psycopg2 (sync) — this is the stand
 """
 from logging.config import fileConfig
 
+from sqlalchemy import engine_from_config, pool
+
 # Import all models so Alembic can auto-detect them
 import app.models  # noqa: F401
 from alembic import context
 from app.core.config import settings
 from app.core.database import Base
-from sqlalchemy import engine_from_config, pool
 
 config = context.config
 if config.config_file_name is not None:

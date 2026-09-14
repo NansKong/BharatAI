@@ -6,6 +6,7 @@ must match whole words: "management" must not resolve via the "me" key, and
 "economics" must not resolve via the "cs" key.
 """
 import pytest
+
 from app.workers.incoscore_tasks import _resolve_user_domain
 
 

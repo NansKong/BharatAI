@@ -7,14 +7,14 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from app.core.database import get_db
-from app.core.feature_flags import (get_all_flags, invalidate_flags_cache,
-                                    is_enabled)
-from app.core.security import get_current_user, require_admin
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
+from app.core.feature_flags import get_all_flags, invalidate_flags_cache, is_enabled
+from app.core.security import get_current_user, require_admin
 
 router = APIRouter()
 
@@ -221,7 +221,7 @@ async def flag_analytics(
 
     true_stmt = select(func.count(FlagEvaluation.id)).where(
         FlagEvaluation.flag_name == flag_name,
-        FlagEvaluation.result == True,
+        FlagEvaluation.result.is_(True),
     )
     true_count = int((await db.execute(true_stmt)).scalar_one() or 0)
 

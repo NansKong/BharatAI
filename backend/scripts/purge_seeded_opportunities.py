@@ -8,10 +8,11 @@ import asyncio
 import sys
 
 sys.path.insert(0, ".")
+from sqlalchemy import delete, func, or_, select
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.core.redis import cache_delete_pattern
 from app.models.opportunity import Opportunity
-from sqlalchemy import delete, func, or_, select
 
 
 async def purge_seeded():

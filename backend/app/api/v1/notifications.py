@@ -7,12 +7,13 @@ from __future__ import annotations
 import logging
 from uuid import UUID
 
-from app.core.database import get_db
-from app.core.security import get_current_user
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
+from app.core.security import get_current_user
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -95,8 +96,9 @@ async def unread_count(
     current_user=Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    from app.models.incoscore import Notification
     from sqlalchemy import func
+
+    from app.models.incoscore import Notification
 
     count = int(
         (

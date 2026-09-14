@@ -2,9 +2,10 @@ import asyncio
 import sys
 
 sys.path.insert(0, ".")
+from sqlalchemy import delete, or_
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.models.opportunity import Opportunity
-from sqlalchemy import delete, or_
 
 
 async def main():

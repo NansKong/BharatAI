@@ -2,10 +2,11 @@ import json
 import uuid
 from datetime import datetime, timezone
 
+from sqlalchemy import select
+
 from app.core.database import AsyncSessionLocal
 from app.models.opportunity import MonitoredSource, ScrapeDeadLetter
 from app.workers.scrape_tasks import _log_dead_letter
-from sqlalchemy import select
 
 
 def test_dead_letter_persistence_path_writes_db_record(run_async):

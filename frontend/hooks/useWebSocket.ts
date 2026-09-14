@@ -42,7 +42,9 @@ export function useWebSocket(userId: string | null | undefined) {
     useEffect(() => {
         connect();
         return () => {
-            reconnectTimer.current && clearTimeout(reconnectTimer.current);
+            if (reconnectTimer.current) {
+                clearTimeout(reconnectTimer.current);
+            }
             ws.current?.close();
         };
     }, [connect]);

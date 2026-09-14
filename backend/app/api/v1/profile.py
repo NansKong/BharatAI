@@ -6,6 +6,11 @@ import logging
 from typing import Optional
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from pydantic import BaseModel, Field
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.ai.resume_parser import parse_resume, sanitize_skills
 from app.core.config import settings
 from app.core.database import get_db
@@ -14,10 +19,6 @@ from app.core.security import get_current_user
 from app.core.storage import store_resume_pdf
 from app.models.user import Profile
 from app.workers.ai_tasks import generate_embeddings
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from pydantic import BaseModel, Field
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

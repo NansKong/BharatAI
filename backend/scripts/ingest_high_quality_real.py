@@ -10,6 +10,8 @@ import sys
 import time
 
 sys.path.insert(0, ".")
+from sqlalchemy import func, select
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.core.redis import cache_delete_pattern, close_redis, init_redis
 from app.models.opportunity import Opportunity
@@ -17,7 +19,6 @@ from app.scrapers.base import BaseScraper, ScrapedOpportunity
 from app.scrapers.devfolio_api import DevfolioAPIScraper
 from app.scrapers.rss_scraper import RSSScraper
 from app.scrapers.unstop_api import UnstopAPIScraper
-from sqlalchemy import func, select
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"

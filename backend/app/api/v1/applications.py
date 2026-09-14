@@ -9,6 +9,12 @@ import logging
 from typing import Optional
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.ai.application_ai import generate_autofill, generate_checklist
 from app.core.database import get_db
 from app.core.redis import get_redis
@@ -17,11 +23,6 @@ from app.models.application import Application
 from app.models.autofill_log import AutofillLog
 from app.models.opportunity import Opportunity
 from app.models.user import Profile
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel, Field
-from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

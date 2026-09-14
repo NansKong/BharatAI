@@ -1,6 +1,7 @@
 """Stub routers for applications, community, incoscore, notifications."""
-from app.core.security import get_current_user, require_admin
 from fastapi import APIRouter, Depends
+
+from app.core.security import get_current_user, require_admin
 
 # ── Applications ──────────────────────────────────────────────────────────────
 applications_router = APIRouter()

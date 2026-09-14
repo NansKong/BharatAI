@@ -8,11 +8,16 @@ import asyncio
 import threading
 from typing import AsyncGenerator
 
-from app.core.config import settings
-from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
-                                    async_sessionmaker, create_async_engine)
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
+
+from app.core.config import settings
 
 _engine_kwargs: dict = {"echo": settings.DEBUG}
 

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Search, ArrowUpRight, ArrowDownRight, Building2, Calendar, Sparkles } from "lucide-react";
+import { Search, Building2 } from "lucide-react";
 import { TopNav } from "@/components/layout/Sidebar";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";

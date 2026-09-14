@@ -10,17 +10,21 @@ from pathlib import Path
 from uuid import UUID
 
 import redis.asyncio as aioredis
+from celery.exceptions import MaxRetriesExceededError, Retry
+from prometheus_client import Histogram
+from sqlalchemy import select
+
 from app.ai.classifier import get_domain_classifier
-from app.ai.embeddings import (build_opportunity_text, build_profile_text,
-                               generate_embedding)
+from app.ai.embeddings import (
+    build_opportunity_text,
+    build_profile_text,
+    generate_embedding,
+)
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal, close_database
 from app.models.opportunity import Opportunity
 from app.models.user import Profile, User
 from app.workers.celery_app import celery_app
-from celery.exceptions import MaxRetriesExceededError, Retry
-from prometheus_client import Histogram
-from sqlalchemy import select
 
 logger = logging.getLogger(__name__)
 

@@ -11,13 +11,13 @@ from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from app.core.config import settings
 from app.core.security import hash_password
 from app.models.incoscore import IncoScoreHistory
 from app.models.opportunity import MonitoredSource, Opportunity
 from app.models.user import Profile, User
-from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
-                                    create_async_engine)
 
 engine = create_async_engine(settings.DATABASE_URL)
 SessionLocal = async_sessionmaker(

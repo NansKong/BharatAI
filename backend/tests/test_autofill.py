@@ -114,8 +114,6 @@ def test_autofill_rate_limit(client, create_user_token):
     # Patch Redis INCR to simulate being over the limit
     from app.api.v1 import applications as apps_module
 
-    original_check = apps_module._check_autofill_rate_limit
-
     call_count = 0
 
     async def _mock_rate_limit(user_id, redis):

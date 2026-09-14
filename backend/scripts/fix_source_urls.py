@@ -7,9 +7,10 @@ import asyncio
 import sys
 
 sys.path.insert(0, ".")
+from sqlalchemy import select
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.models.opportunity import MonitoredSource
-from sqlalchemy import select
 
 URL_UPDATES = {
     "IIT Bombay Events": "https://www.iitb.ac.in/en/events",

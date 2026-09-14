@@ -13,11 +13,11 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from app.core.config import settings
 from fastapi import Request, Response
-from starlette.middleware.base import (BaseHTTPMiddleware,
-                                       RequestResponseEndpoint)
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import JSONResponse
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 

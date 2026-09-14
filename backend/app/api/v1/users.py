@@ -3,9 +3,10 @@ Users API – current user info and resume upload.
 """
 from typing import List, Optional
 
-from app.core.security import get_current_user
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from pydantic import BaseModel
+
+from app.core.security import get_current_user
 
 router = APIRouter()
 

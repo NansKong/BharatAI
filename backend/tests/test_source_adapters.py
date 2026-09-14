@@ -1,9 +1,13 @@
 from pathlib import Path
 
 import pytest
-from app.scrapers.sources import (ProfiledDynamicScraper,
-                                  ProfiledStaticScraper, build_source_scraper,
-                                  get_source_profile)
+
+from app.scrapers.sources import (
+    ProfiledDynamicScraper,
+    ProfiledStaticScraper,
+    build_source_scraper,
+    get_source_profile,
+)
 from app.scrapers.static import StaticScraper
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "scrapers"

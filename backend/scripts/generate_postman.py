@@ -20,7 +20,6 @@ BASE_URL = "{{base_url}}"
 def _method_item(path: str, method: str, operation: dict) -> dict:
     """Convert a single OpenAPI operation to a Postman item."""
     name = operation.get("summary") or f"{method.upper()} {path}"
-    tags = operation.get("tags", ["General"])
 
     # Build URL
     url_parts = path.lstrip("/").split("/")

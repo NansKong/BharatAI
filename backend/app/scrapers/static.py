@@ -4,8 +4,9 @@ from typing import Optional
 from urllib.parse import urljoin
 
 import httpx
-from app.scrapers.base import BaseScraper, ScrapedOpportunity
 from bs4 import BeautifulSoup
+
+from app.scrapers.base import BaseScraper, ScrapedOpportunity
 
 NOISE_CONTAINERS = {"nav", "header", "footer", "aside"}
 NOISE_CLASSES = {"menu", "navbar", "nav", "sidebar", "footer", "header", "breadcrumbs"}

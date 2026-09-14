@@ -9,12 +9,13 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 import pytest
+from sqlalchemy import func, select
+
 from app.core.database import AsyncSessionLocal
 from app.models.application import Application
 from app.models.opportunity import Opportunity
 from app.models.user import User
 from app.workers import scrape_tasks
-from sqlalchemy import func, select
 
 
 class _EmptyScraper:

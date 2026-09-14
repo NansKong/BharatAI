@@ -8,9 +8,10 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-from app.core.config import settings
 from minio import Minio
 from minio.error import S3Error
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 

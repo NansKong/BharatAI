@@ -3,9 +3,10 @@ Celery application configuration.
 """
 import sys
 
-from app.core.config import settings
 from celery import Celery
 from celery.schedules import crontab
+
+from app.core.config import settings
 
 celery_app = Celery(
     "bharatai",

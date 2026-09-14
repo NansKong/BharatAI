@@ -69,10 +69,11 @@ def send_opportunity_match_notification(self, user_id: str, opportunity_id: str)
     """Create in-app notification and send email for a matched opportunity."""
 
     async def _run():
+        from sqlalchemy import select
+
         from app.core.database import AsyncSessionLocal
         from app.models.opportunity import Opportunity
         from app.models.user import Profile, User
-        from sqlalchemy import select
 
         async with AsyncSessionLocal() as db:
             user = (
@@ -122,11 +123,12 @@ def send_deadline_reminder(self, opportunity_id: str, days_remaining: int):
     """Notify all applicants about an approaching deadline."""
 
     async def _run():
+        from sqlalchemy import select
+
         from app.core.database import AsyncSessionLocal
         from app.models.application import Application
         from app.models.opportunity import Opportunity
         from app.models.user import Profile, User
-        from sqlalchemy import select
 
         async with AsyncSessionLocal() as db:
             opp = (
@@ -199,10 +201,11 @@ def notify_achievement_result(self, achievement_id: str):
     """Email + in-app notification when an achievement is verified or rejected."""
 
     async def _run():
+        from sqlalchemy import select
+
         from app.core.database import AsyncSessionLocal
         from app.models.application import Achievement
         from app.models.user import Profile, User
-        from sqlalchemy import select
 
         async with AsyncSessionLocal() as db:
             ach = (
@@ -259,9 +262,10 @@ def notify_score_change(self, user_id: str, old_score: float, new_score: float):
         return {"status": "skip", "reason": "delta <= 50"}
 
     async def _run():
+        from sqlalchemy import select
+
         from app.core.database import AsyncSessionLocal
         from app.models.user import User
-        from sqlalchemy import select
 
         async with AsyncSessionLocal() as db:
             user = (
@@ -302,9 +306,10 @@ def check_deadlines(self):
     """
 
     async def _run():
+        from sqlalchemy import and_, select
+
         from app.core.database import AsyncSessionLocal
         from app.models.opportunity import Opportunity
-        from sqlalchemy import and_, select
 
         now = datetime.now(timezone.utc)
         targets = {1: now + timedelta(days=1), 7: now + timedelta(days=7)}

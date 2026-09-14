@@ -7,6 +7,11 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
+from sqlalchemy import func, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.ai.embeddings import build_opportunity_text
 from app.ai.personalization import (
     compute_relevance_score,
@@ -21,10 +26,6 @@ from app.core.security import get_optional_user
 from app.models.application import Application
 from app.models.opportunity import Opportunity
 from app.models.user import Profile
-from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
-from sqlalchemy import func, or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

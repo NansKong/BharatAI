@@ -6,14 +6,15 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from app.core.config import settings
-from app.core.database import get_db
-from app.core.redis import get_redis, is_token_revoked
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.config import settings
+from app.core.database import get_db
+from app.core.redis import get_redis, is_token_revoked
 
 # Password hashing context (bcrypt, cost factor 12)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
@@ -151,12 +152,13 @@ async def get_current_user(
     FastAPI dependency: returns the current authenticated User ORM object.
     Imported here lazily to avoid circular imports with models.
     """
-    from app.models.user import User
     from sqlalchemy import select
+
+    from app.models.user import User
 
     user_id = payload.get("sub")
     result = await db.execute(
-        select(User).where(User.id == user_id, User.is_active == True)
+        select(User).where(User.id == user_id, User.is_active.is_(True))
     )
     user = result.scalar_one_or_none()
     if not user:
@@ -212,8 +214,9 @@ async def get_optional_user(
     if jti and await is_token_revoked(jti):
         return None
 
-    from app.models.user import User
     from sqlalchemy import select
+
+    from app.models.user import User
 
     user_id = payload.get("sub")
     result = await db.execute(

@@ -10,10 +10,11 @@ import sys
 import time
 
 sys.path.insert(0, ".")
+from sqlalchemy import func, select
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.models.opportunity import MonitoredSource, Opportunity
 from app.workers.scrape_tasks import _scrape_source
-from sqlalchemy import func, select
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"

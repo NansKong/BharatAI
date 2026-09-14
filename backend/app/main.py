@@ -5,15 +5,16 @@ import time
 from contextlib import asynccontextmanager
 
 import structlog
-from app.core.config import settings
-from app.core.database import close_database, engine, init_database
-from app.core.logging import configure_logging
-from app.core.redis import close_redis, init_redis
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from prometheus_fastapi_instrumentator import Instrumentator
+
+from app.core.config import settings
+from app.core.database import close_database, engine, init_database
+from app.core.logging import configure_logging
+from app.core.redis import close_redis, init_redis
 
 configure_logging("DEBUG" if settings.DEBUG else "INFO")
 logger = structlog.get_logger()
@@ -37,9 +38,10 @@ async def lifespan(app: FastAPI):
     # Auto-populate live opportunities on startup if DB is empty
     async def _auto_seed_if_empty():
         try:
+            from sqlalchemy import func, select
+
             from app.core.database import AsyncSessionLocal
             from app.models.opportunity import Opportunity
-            from sqlalchemy import func, select
 
             async with AsyncSessionLocal() as db:
                 count = (
@@ -205,8 +207,9 @@ def create_application() -> FastAPI:
     # ── Health Endpoints ──────────────────────────────────────
     @app.get("/health", tags=["Health"], summary="Overall health check")
     async def health_check():
-        from app.core.redis import health_check as redis_health
         from sqlalchemy import text
+
+        from app.core.redis import health_check as redis_health
 
         db_ok = False
         redis_ok = False
@@ -260,8 +263,9 @@ def create_application() -> FastAPI:
         )
 
     # ── WebSocket: Real-time Notification Push ────────────────
-    from app.core.ws import manager as ws_manager
     from fastapi import WebSocket, WebSocketDisconnect
+
+    from app.core.ws import manager as ws_manager
 
     @app.websocket("/ws/notifications/{user_id}")
     async def ws_notifications(websocket: WebSocket, user_id: str, token: str = ""):

@@ -16,9 +16,10 @@ import time
 import httpx
 
 sys.path.insert(0, ".")
+from sqlalchemy import select
+
 from app.core.database import AsyncSessionLocal, close_database, init_database
 from app.models.opportunity import MonitoredSource
-from sqlalchemy import select
 
 DRY_RUN = os.getenv("DRY_RUN", "0") == "1"
 TIMEOUT = 12  # seconds

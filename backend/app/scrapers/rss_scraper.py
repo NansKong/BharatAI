@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 from typing import Optional
 
 import httpx
+
 from app.scrapers.base import BaseScraper, ScrapedOpportunity
 
 logger = logging.getLogger(__name__)
