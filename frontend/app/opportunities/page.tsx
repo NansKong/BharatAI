@@ -165,7 +165,7 @@ function OpportunitiesContent() {
     queryFn: async () => {
       const headers: Record<string, string> = {};
       if (isLoggedIn && accessToken) headers.Authorization = `Bearer ${accessToken}`;
-      const params: Record<string, string> = { limit: "60" };
+      const params: Record<string, string> = { limit: "200" };
       if (domain !== "All") params.domain = domain;
       const res = await axios.get(`${API_URL}/api/v1/feed`, { headers, params });
       return res.data;

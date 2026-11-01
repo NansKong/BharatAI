@@ -9,7 +9,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from sqlalchemy import func, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.embeddings import build_opportunity_text
@@ -112,13 +112,14 @@ async def get_feed(
     domain: Optional[str] = Query(
         None, description="Filter by domain code (e.g. cs, ai_ds)"
     ),
+    category: Optional[str] = Query(None, pattern="^(internships)?$"),
     current_user=Depends(get_optional_user),
     db: AsyncSession = Depends(get_db),
 ):
     is_authenticated = current_user is not None
 
     # Cache key: per-user if logged in, shared public key otherwise
-    cache_key = f"feed:{'user:' + str(current_user.id) if is_authenticated else 'public'}:{limit}:{domain or 'all'}"
+    cache_key = f"feed:{'user:' + str(current_user.id) if is_authenticated else 'public'}:{limit}:{domain or 'all'}:{category or 'all'}"
     cached_payload = await cache_get(cache_key)
     if cached_payload:
         payload = json.loads(cached_payload)
@@ -149,6 +150,15 @@ async def get_feed(
     )
     if domain:
         stmt = stmt.where(Opportunity.domain == domain)
+    if category == "internships":
+        # Require a direct internship listing on a known application platform.
+        stmt = stmt.where(
+            and_(
+                Opportunity.title.op("~*")(r"intern|trainee|apprentice"),
+                Opportunity.source_url.ilike("https://unstop.com/internships/%"),
+                Opportunity.application_link.ilike("https://unstop.com/internships/%"),
+            )
+        )
 
     opportunities = (await db.execute(stmt)).scalars().all()
 

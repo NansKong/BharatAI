@@ -166,7 +166,7 @@ function InternshipsContent() {
     queryFn: async () => {
       const headers: Record<string, string> = {};
       if (isLoggedIn && accessToken) headers.Authorization = `Bearer ${accessToken}`;
-      const params: Record<string, string> = { limit: "100" };
+      const params: Record<string, string> = { limit: "100", category: "internships" };
       if (domain !== "All") params.domain = domain;
       const res = await axios.get(`${API_URL}/api/v1/feed`, { headers, params });
       return res.data;
@@ -174,22 +174,7 @@ function InternshipsContent() {
     staleTime: 3 * 60 * 1000,
   });
 
-  // Filter for internships, traineeships, student associate roles, and research apprenticeships
   const items: FeedItem[] = (data?.items ?? []).filter((item: FeedItem) => {
-    const text = `${item.title} ${item.description ?? ""} ${item.eligibility ?? ""}`.toLowerCase();
-    const isInternship =
-      text.includes("intern") ||
-      text.includes("trainee") ||
-      text.includes("associate") ||
-      text.includes("fellow") ||
-      text.includes("apprentice") ||
-      text.includes("student") ||
-      text.includes("unstop") ||
-      text.includes("remotive") ||
-      text.includes("arbeitnow");
-
-    if (!isInternship) return false;
-
     if (!search) return true;
     const q = search.toLowerCase();
     return (
